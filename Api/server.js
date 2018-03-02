@@ -4,14 +4,14 @@ const bodyParser = require('body-parser');
 const db = require('./config/database');
 const mysql = require('mysql');
 const messageRoute = require('./routes/messageRoute');
+const AWS = require('aws-sdk');
 
-
+AWS.config.region = process.env.REGION;
 
 //init app to express constructor
 const app = express();
 
-//Declare the port
-const port = 3000;
+
 
 //Middleware for CORS
 app.use(cors());
@@ -27,23 +27,22 @@ app.get('/', (req,res) => {
 
 app.use('/message',messageRoute);
 
-
-// db.connect(function(err){
-//     if(!err) {
-//         console.log("Database is connected ... ");    
-//     //Listen to port 3000
-//     app.listen(port, () => {
-//         console.log(`Starting the server at port ${port}`);
-//     });
-
-//     } else {
-//         throw err;   
-//     }
-//     });
-
-    app.listen(port, () => {
-        console.log(`Starting the server at port ${port}`);
+var port = process.env.PORT || 3000;
+db.connect(function(err){
+    if(!err) {
+        console.log("Database is connected ... ");    
+    //Listen to port 3000 or whatever 8081
+    var server = app.listen(port, function () {
+        console.log('Server running at http://127.0.0.1:' + port + '/');
     });
+    
+
+    } else {
+        throw err;   
+    }
+    });
+
+
 
 
 
