@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LeaveAMessage</string>
+    <string name="title">Leave\n\tA\n\t\tMessage</string>
+    <string name="google_sign">Google Sign In</string>
+    <string name="fb_sign">Facebook Sign In</string>
+    <string name="subtitle">Log In</string>
+</resources>
