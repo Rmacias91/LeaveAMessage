@@ -4,4 +4,10 @@
     <string name="google_sign">Google Sign In</string>
     <string name="fb_sign">Facebook Sign In</string>
     <string name="subtitle">Log In</string>
+
+
+    <!--FaceBookStrings-->
+    <string name="facebook_app_id">230349377524139</string>
+    <string name="fb_login_protocol_scheme">fb230349377524139</string>
+
 </resources>
