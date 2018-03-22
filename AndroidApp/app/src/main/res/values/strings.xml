@@ -9,5 +9,6 @@
     <!--FaceBookStrings-->
     <string name="facebook_app_id">230349377524139</string>
     <string name="fb_login_protocol_scheme">fb230349377524139</string>
+    <string name="FailedLogin">Failed to Sign In.</string>
 
 </resources>
