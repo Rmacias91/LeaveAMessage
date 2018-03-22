@@ -1,4 +1,4 @@
-package com.example.richie.leaveamessage.SignIn;
+package com.example.richie.leaveamessage.main.UI.SignIn;
 
 import android.content.Intent;
 
@@ -14,7 +14,7 @@ public interface SignInContract {
 
     }
 
-    public interface PresenterSignIn{
+     interface PresenterSignIn{
 
         void onStart(GoogleSignInAccount account);
 

@@ -1,4 +1,4 @@
-package com.example.richie.leaveamessage.SignIn;
+package com.example.richie.leaveamessage.main.UI.SignIn;
 
 import android.content.Intent;
 import android.util.Log;
@@ -20,11 +20,12 @@ import com.google.android.gms.tasks.Task;
 public class SignInPresenter implements SignInContract.PresenterSignIn{
     private static final String TAG = SignInPresenter.class.getSimpleName();
     private CallbackManager mCallbackManager;
-    private SignInView signInView;
+    private SignInContract.ViewSignIn signInView;
+    public static int RC_SIGN_IN_GOOGLE = 23;
 
-    SignInPresenter(SignInView signinView){
+    public SignInPresenter(SignInContract.ViewSignIn signinView){
         mCallbackManager = CallbackManager.Factory.create();
-        this.signInView = signinView;
+        signInView = signinView;
 
 
         LoginManager.getInstance().registerCallback(mCallbackManager,
@@ -53,16 +54,16 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
         }
 
         boolean loggedIn = AccessToken.getCurrentAccessToken() == null;
-
         if(!loggedIn){
             signInView.showMessage("Signed in with Facebook");
         }
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == SignInView.RC_SIGN_IN_GOOGLE) {
+        if (requestCode == RC_SIGN_IN_GOOGLE) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
             Task<GoogleSignInAccount> task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -78,7 +79,7 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             signInView.showMessage("Logged in!");
 
-            // Signed in successfully, show authenticated UI.
+            // Signed in successfully, show authenticated user interface
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.

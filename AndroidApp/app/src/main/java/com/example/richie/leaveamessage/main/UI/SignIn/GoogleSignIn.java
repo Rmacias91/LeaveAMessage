@@ -1,4 +1,4 @@
-package com.example.richie.leaveamessage.SignIn;
+package com.example.richie.leaveamessage.main.UI.SignIn;
 
 /**
  * Created by Richie on 3/16/2018.

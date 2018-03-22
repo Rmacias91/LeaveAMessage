@@ -1,14 +1,14 @@
-package com.example.richie.leaveamessage.SignIn;
+package com.example.richie.leaveamessage.main.UI.SignIn;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
 import com.facebook.login.widget.LoginButton;
@@ -29,7 +29,6 @@ import java.util.Arrays;
 public class SignInView extends AppCompatActivity implements View.OnClickListener, SignInContract.ViewSignIn{
     private static final String TAG = SignInView.class.getSimpleName();
     private static final String EMAIL = "email";
-    public static int RC_SIGN_IN_GOOGLE = 23;
     private GoogleSignInClient mGoogleSignInClient;
     private SignInPresenter signInPresenter;
 
@@ -50,6 +49,7 @@ public class SignInView extends AppCompatActivity implements View.OnClickListene
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
         //Facebook
+        FacebookSdk.sdkInitialize(this);
         LoginButton loginButtonFb = findViewById(R.id.fb_sign_in_button);
         loginButtonFb.setReadPermissions(Arrays.asList(EMAIL));
 
@@ -70,8 +70,9 @@ public class SignInView extends AppCompatActivity implements View.OnClickListene
 
     private void signInGoogle(){
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent,RC_SIGN_IN_GOOGLE );
+        startActivityForResult(signInIntent,SignInPresenter.RC_SIGN_IN_GOOGLE );
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -81,7 +82,6 @@ public class SignInView extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        signInPresenter.onItemClicked(view.getId());
         switch (view.getId()) {
             case R.id.google_sign_in_button:
                 signInGoogle();
