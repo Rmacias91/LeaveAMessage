@@ -6,15 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
+
 import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +24,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
     private static final String TAG = ListView.class.getSimpleName();
     private RecyclerView.LayoutManager mLayoutManager;
     private ListViewAdapter mAdapter;
+    private List<Message> mMessages;
+    private ListViewPresenter mPresneter;
 
 
 
@@ -33,26 +33,27 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_layout);
-        //Test List
-        List<Message> messages = new ArrayList<>();
-        messages.add(new Message("Hello","2mi"));
-        messages.add(new Message("There","3mi"));
-        messages.add(new Message("Richie","4mi"));
 
-        Log.d(TAG,"Messages added are:" + messages.toString() );
+        mPresneter = new ListViewPresenter(this);
+
 
         mRecyclerView = findViewById(R.id.recycle_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mAdapter = new ListViewAdapter(this,messages);
+        mAdapter = new ListViewAdapter(this,mMessages);
         mRecyclerView.setAdapter(mAdapter);
-
     }
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Log.d(TAG,"CLICKED!");
         Toast.makeText(this,"Starting activity to read message at pos" + clickedItemIndex,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setData(List<Message> messages) {
+        mMessages = messages;
+        mAdapter.notifyDataSetChanged();
     }
 }
