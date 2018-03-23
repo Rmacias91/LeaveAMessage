@@ -49,7 +49,6 @@ public class SignInView extends AppCompatActivity implements View.OnClickListene
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
         //Facebook
-        FacebookSdk.sdkInitialize(this);
         LoginButton loginButtonFb = findViewById(R.id.fb_sign_in_button);
         loginButtonFb.setReadPermissions(Arrays.asList(EMAIL));
 
