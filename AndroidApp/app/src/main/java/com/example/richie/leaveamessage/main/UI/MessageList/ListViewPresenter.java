@@ -16,7 +16,7 @@ class ListViewPresenter implements ListViewContract.PresenterList{
     }
 
     @Override
-    public List<Message> getData() {
+    public void getData() {
         //Grab Data From Model
         //Test List
         List<Message> messages = new ArrayList<>();
@@ -24,7 +24,6 @@ class ListViewPresenter implements ListViewContract.PresenterList{
         messages.add(new Message("There","3mi"));
         messages.add(new Message("Richie","4mi"));
         mViewList.setData(messages);
-        return null;
     }
 
 

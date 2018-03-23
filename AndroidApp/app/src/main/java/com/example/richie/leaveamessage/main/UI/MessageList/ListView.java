@@ -13,6 +13,7 @@ import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +25,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
     private static final String TAG = ListView.class.getSimpleName();
     private RecyclerView.LayoutManager mLayoutManager;
     private ListViewAdapter mAdapter;
+    //Not Sure If I should have a list of data here. Not Logic so I think its okay
     private List<Message> mMessages;
     private ListViewPresenter mPresneter;
 
@@ -33,9 +35,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_layout);
-
+        mMessages = new ArrayList<>();
         mPresneter = new ListViewPresenter(this);
-
 
         mRecyclerView = findViewById(R.id.recycle_list);
         mRecyclerView.setHasFixedSize(true);
@@ -43,6 +44,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new ListViewAdapter(this,mMessages);
         mRecyclerView.setAdapter(mAdapter);
+        mPresneter.getData();
+
     }
 
     @Override
@@ -53,7 +56,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
 
     @Override
     public void setData(List<Message> messages) {
-        mMessages = messages;
+        mMessages.clear();
+        mMessages.addAll(messages);
         mAdapter.notifyDataSetChanged();
     }
 }

@@ -16,7 +16,7 @@ public interface ListViewContract {
 
     interface PresenterList{
 
-         List<Message> getData();
+         void getData();
     }
 
     interface ModelList{

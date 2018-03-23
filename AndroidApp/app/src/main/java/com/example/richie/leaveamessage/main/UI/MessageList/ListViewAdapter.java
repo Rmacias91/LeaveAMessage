@@ -55,6 +55,9 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.MyView
 
     @Override
     public int getItemCount() {
+        if(mMessageList== null){
+            return 0;
+        }
         return mMessageList.size();
     }
 
