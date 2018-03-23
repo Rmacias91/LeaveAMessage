@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.richie.leaveamessage.R;
@@ -22,9 +23,15 @@ import java.util.List;
 public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.MyViewHolder> {
     private static final String TAG = ListViewAdapter.class.getSimpleName();
     private List<Message> mMessageList;
+    private ListItemClickListener clickListener;
 
-    public ListViewAdapter(List<Message> messageList){
+    public ListViewAdapter(ListItemClickListener clickListener, List<Message> messageList){
+        this.clickListener = clickListener;
         this.mMessageList = messageList;
+    }
+
+    public interface ListItemClickListener {
+        void onListItemClick(int clickedItemIndex);
     }
 
     @Override
@@ -48,10 +55,12 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.MyView
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mMessageList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+
+
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private TextView messageText;
         private TextView distanceText;
 
@@ -59,6 +68,15 @@ public class ListViewAdapter extends RecyclerView.Adapter<ListViewAdapter.MyView
             super(itemView);
             messageText = itemView.findViewById(R.id.message_list_item);
             distanceText = itemView.findViewById(R.id.distance_list_item);
+            itemView.setOnClickListener(this);
+        }
+
+
+        @Override
+        public void onClick(View view) {
+            Log.d(TAG,"CLICKED!");
+            clickListener.onListItemClick(getAdapterPosition());
         }
     }
+
 }
