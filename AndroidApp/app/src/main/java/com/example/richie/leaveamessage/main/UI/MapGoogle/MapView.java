@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -102,6 +103,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         setUpLocationCallback();
+        startLocationUpdates();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -133,7 +135,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         getLocationPermission();
         if(!mLocationPermissionGranted) {
             return; }
-            
+            Toast.makeText(MapView.this,"RAN REQUEST LOCATION UPDATES",Toast.LENGTH_SHORT).show();
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
                     null /* Looper */);
@@ -147,12 +149,22 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
+                    Log.d(TAG,"RESULT CONTAINTS NOTHING");
+                    Toast.makeText(getApplicationContext(),"No Location",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                for (Location location : locationResult.getLocations()) {
-                    // Update UI with location data
-                    // ...
-                }
+                Location lastLocation = locationResult.getLastLocation();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lastLocation.getLatitude(),
+                                lastLocation.getLongitude()), DEFAULT_ZOOM));
+                //Test location
+                Toast.makeText(getApplicationContext(),"Lat: "+ lastLocation.getLatitude() +" Lon: "+lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+                //                for (Location location : locationResult.getLocations()) {
+//                    // Update UI with location data
+//                    // ...
+//                }
+                Log.d(TAG,"RESULT Constains stuff");
+
             }
         };
     }
@@ -230,6 +242,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
                 // All location settings are satisfied. The client can initialize
                 // location requests here.
                 // ...
+                Toast.makeText(MapView.this, "Made The Location Settings Change", Toast.LENGTH_SHORT).show();
             }
         });
 
