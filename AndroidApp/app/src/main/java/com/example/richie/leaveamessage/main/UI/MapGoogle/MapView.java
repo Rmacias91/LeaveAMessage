@@ -4,12 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
+
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
+import com.example.richie.leaveamessage.main.Model.Message;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -34,19 +35,26 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Richie on 3/28/2018.
  */
 
-public class MapView extends AppCompatActivity implements OnMapReadyCallback {
+public class MapView extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleMap.OnInfoWindowClickListener {
 
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
@@ -79,6 +87,9 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
     private boolean mCheckCoarse = false;
     private boolean mCheckFine = false;
 
+    //TEST DELETE AFTER
+    private List<Message> mTestMessageList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +105,19 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
 
         setContentView(R.layout.map_view_layout);
 
+        //Need 7 decimals
+        //TODO fixOverLAy of messages https://developers.google.com/maps/documentation/android-api/utility/marker-clustering
+         mTestMessageList = new ArrayList<Message>(){{
+             add(new Message("Look here","Made ya Look","41.9456354","-87.6679754"));
+             add(new Message("Eyyyyy","You made it to the coolest block in the city!","42.9525643","-87.6542044"));
+             add(new Message("Free Dominos","Yum pizza","41.9525644","-87.6542000"));
+             add(new Message("I grew up here","Hope you guys enjoy house! Great Memories","41.9456359","-87.6679759"));
+         }};
+
+
+
+        // (new Message("Look here","Made ya Look","42,-87")
+
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this);
 
@@ -103,13 +127,15 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+
         setUpLocationCallback();
-        startLocationUpdates();
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
     }
 
     @Override
@@ -126,8 +152,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (mRequestingLocationUpdates) {
+        if (!mRequestingLocationUpdates) {
             startLocationUpdates();
         }
     }
@@ -140,14 +165,11 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
                     null);
+        mRequestingLocationUpdates = true;
 
 
     }
 
-    private void showMessage(){
-        Toast.makeText(this,"No Location",Toast.LENGTH_SHORT).show();
-
-    }
 
     private void showMessage2(Location lastLocation){
         Toast.makeText(getApplicationContext(),"Lat: "+ lastLocation.getLatitude() +" Lon: "+lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
@@ -159,11 +181,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 super.onLocationResult(locationResult);
-//                if (locationResult == null) {
-//                    Log.d(TAG,"RESULT CONTAINTS NOTHING");
-//                    showMessage();
-//                    return;
-//                }
+
 
                 Location lastLocation = locationResult.getLastLocation();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -171,11 +189,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
                                 lastLocation.getLongitude()), DEFAULT_ZOOM));
                 //Test location
                 showMessage2(lastLocation);
-                //                for (Location location : locationResult.getLocations()) {
-//                    // Update UI with location data
-//                    // ...
-//                }
-                Log.d(TAG,"RESULT Constains stuff");
 
             }
         };
@@ -189,12 +202,25 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
 
     private void stopLocationUpdates() {
         mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        mRequestingLocationUpdates = false;
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //Later Store the markers in a list of Markers. Case we need it. its here.
+
+        for(Message message: mTestMessageList) {
+            Marker listMarkers = mMap.addMarker(new MarkerOptions()
+                    .position(message.getLatLng())
+                    .title(message.getTitle())
+                    .snippet(message.getMessage())
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.message)));
+
+        }
+        mMap.setOnInfoWindowClickListener(this);
+
 
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
@@ -222,7 +248,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
             }
         });
 
-
         getLocationPermission();
 
         // Get the current location of the device and set the position of the map.
@@ -237,10 +262,12 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
 
     }
 
+
+
     private void changeLocationSettings(){
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(10000);
+        mLocationRequest.setFastestInterval(100000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -299,7 +326,6 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
-                            Toast.makeText(MapView.this, "last known location is : "+mLastKnownLocation, Toast.LENGTH_SHORT).show();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -386,6 +412,11 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(MapView.this,"Clicked Message " +marker.getTitle(),Toast.LENGTH_SHORT).show();
     }
 }
 
