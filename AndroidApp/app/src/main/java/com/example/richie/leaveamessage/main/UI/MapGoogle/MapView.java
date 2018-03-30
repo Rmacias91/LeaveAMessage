@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -125,6 +126,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     protected void onResume() {
         super.onResume();
+
         if (mRequestingLocationUpdates) {
             startLocationUpdates();
         }
@@ -135,30 +137,40 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         getLocationPermission();
         if(!mLocationPermissionGranted) {
             return; }
-            Toast.makeText(MapView.this,"RAN REQUEST LOCATION UPDATES",Toast.LENGTH_SHORT).show();
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
                     mLocationCallback,
-                    null /* Looper */);
+                    null);
 
 
     }
 
+    private void showMessage(){
+        Toast.makeText(this,"No Location",Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void showMessage2(Location lastLocation){
+        Toast.makeText(getApplicationContext(),"Lat: "+ lastLocation.getLatitude() +" Lon: "+lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+
+    }
     private void setUpLocationCallback(){
 
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    Log.d(TAG,"RESULT CONTAINTS NOTHING");
-                    Toast.makeText(getApplicationContext(),"No Location",Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                super.onLocationResult(locationResult);
+//                if (locationResult == null) {
+//                    Log.d(TAG,"RESULT CONTAINTS NOTHING");
+//                    showMessage();
+//                    return;
+//                }
+
                 Location lastLocation = locationResult.getLastLocation();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(lastLocation.getLatitude(),
                                 lastLocation.getLongitude()), DEFAULT_ZOOM));
                 //Test location
-                Toast.makeText(getApplicationContext(),"Lat: "+ lastLocation.getLatitude() +" Lon: "+lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+                showMessage2(lastLocation);
                 //                for (Location location : locationResult.getLocations()) {
 //                    // Update UI with location data
 //                    // ...
@@ -209,10 +221,9 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
                 return infoWindow;
             }
         });
-        getLocationPermission();
 
-        // Turn on the My Location layer and the related control on the map.
-        updateLocationUI();
+
+        getLocationPermission();
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
@@ -221,6 +232,8 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         changeLocationSettings();
 
         //SetUp Location Updates
+        // Turn on the My Location layer and the related control on the map.
+        updateLocationUI();
 
     }
 
@@ -237,12 +250,14 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @SuppressLint("MissingPermission")
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
-                Toast.makeText(MapView.this, "Made The Location Settings Change", Toast.LENGTH_SHORT).show();
+                //noinspection MissingPermission
+
+                mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
+                        mLocationCallback, null);
+
             }
         });
 
@@ -284,6 +299,7 @@ public class MapView extends AppCompatActivity implements OnMapReadyCallback {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
+                            Toast.makeText(MapView.this, "last known location is : "+mLastKnownLocation, Toast.LENGTH_SHORT).show();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
