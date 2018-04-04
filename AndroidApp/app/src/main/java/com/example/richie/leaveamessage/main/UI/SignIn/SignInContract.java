@@ -25,6 +25,8 @@ public interface SignInContract {
 
         void showMessage(String message);
 
+        void startActivity();
+
 
     }
 }

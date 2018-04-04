@@ -2,6 +2,7 @@ package com.example.richie.leaveamessage.main.UI.MapGoogle;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 
@@ -12,6 +13,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -19,6 +23,13 @@ import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
+import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
+import com.example.richie.leaveamessage.main.UI.SignIn.SignInView;
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -54,15 +65,13 @@ import java.util.List;
 
 public class MapView extends AppCompatActivity implements
         OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener {
-
+        GoogleMap.OnInfoWindowClickListener,
+        MapContract.ViewMap {
+//TODO Any Logic with Data Lets Refactor to MVP
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
 
-    // The entry points to the Places API.
-    private GeoDataClient mGeoDataClient;
-    private PlaceDetectionClient mPlaceDetectionClient;
 
     // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -86,14 +95,15 @@ public class MapView extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private boolean mCheckCoarse = false;
     private boolean mCheckFine = false;
+    private MapContract.PresenterMap mPresenter;
 
-    //TEST DELETE AFTER
-    private List<Message> mTestMessageList;
+    private GoogleSignInClient mGoogleSignInClient;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         if (savedInstanceState != null) {
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
@@ -105,28 +115,16 @@ public class MapView extends AppCompatActivity implements
 
         setContentView(R.layout.map_view_layout);
 
-        //Need 7 decimals
-        //TODO fixOverLAy of messages https://developers.google.com/maps/documentation/android-api/utility/marker-clustering
-         mTestMessageList = new ArrayList<Message>(){{
-             add(new Message("Look here","Made ya Look","41.9456354","-87.6679754"));
-             add(new Message("Eyyyyy","You made it to the coolest block in the city!","42.9525643","-87.6542044"));
-             add(new Message("Free Dominos","Yum pizza","41.9525644","-87.6542000"));
-             add(new Message("I grew up here","Hope you guys enjoy house! Great Memories","41.9456359","-87.6679759"));
-         }};
-
-
-
-        // (new Message("Look here","Made ya Look","42,-87")
-
-        // Construct a GeoDataClient.
-        mGeoDataClient = Places.getGeoDataClient(this);
+        // Construct a GeoDataClient
+        GeoDataClient geoDC = Places.getGeoDataClient(this);
 
         // Construct a PlaceDetectionClient.
-        mPlaceDetectionClient = Places.getPlaceDetectionClient(this);
+        PlaceDetectionClient placeDC = Places.getPlaceDetectionClient(this);
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        mPresenter = new MapPresenter(this);
 
         setUpLocationCallback();
 
@@ -134,6 +132,10 @@ public class MapView extends AppCompatActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Used for Sign out.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
 
     }
@@ -150,6 +152,44 @@ public class MapView extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_setting_map, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.list_view:
+                Intent intent = new Intent(this,ListView.class);
+                startActivity(intent);
+                return true;
+            case R.id.sign_out:
+                signOut();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
+        boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
+        if(loggedIn){LoginManager.getInstance().logOut();}
+        Intent i = new Intent(this,SignInView.class);
+        startActivity(i);
+        finish();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (!mRequestingLocationUpdates) {
@@ -160,22 +200,19 @@ public class MapView extends AppCompatActivity implements
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
         getLocationPermission();
-        if(!mLocationPermissionGranted) {
-            return; }
-            mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
-                    mLocationCallback,
-                    null);
+        if (!mLocationPermissionGranted) {
+            return;
+        }
+        mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
+                mLocationCallback,
+                null);
         mRequestingLocationUpdates = true;
 
 
     }
 
 
-    private void showMessage2(Location lastLocation){
-        Toast.makeText(getApplicationContext(),"Lat: "+ lastLocation.getLatitude() +" Lon: "+lastLocation.getLongitude(),Toast.LENGTH_SHORT).show();
-
-    }
-    private void setUpLocationCallback(){
+    private void setUpLocationCallback() {
 
         mLocationCallback = new LocationCallback() {
             @Override
@@ -187,8 +224,6 @@ public class MapView extends AppCompatActivity implements
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(lastLocation.getLatitude(),
                                 lastLocation.getLongitude()), DEFAULT_ZOOM));
-                //Test location
-                showMessage2(lastLocation);
 
             }
         };
@@ -211,7 +246,7 @@ public class MapView extends AppCompatActivity implements
         mMap = googleMap;
         //Later Store the markers in a list of Markers. Case we need it. its here.
 
-        for(Message message: mTestMessageList) {
+        for (Message message : mPresenter.getData()) {
             Marker listMarkers = mMap.addMarker(new MarkerOptions()
                     .position(message.getLatLng())
                     .title(message.getTitle())
@@ -238,10 +273,10 @@ public class MapView extends AppCompatActivity implements
                 View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
                         (FrameLayout) findViewById(R.id.map), false);
 
-                TextView title = ( infoWindow.findViewById(R.id.title));
+                TextView title = (infoWindow.findViewById(R.id.title));
                 title.setText(marker.getTitle());
 
-                TextView snippet = ( infoWindow.findViewById(R.id.snippet));
+                TextView snippet = (infoWindow.findViewById(R.id.snippet));
                 snippet.setText(marker.getSnippet());
 
                 return infoWindow;
@@ -263,8 +298,7 @@ public class MapView extends AppCompatActivity implements
     }
 
 
-
-    private void changeLocationSettings(){
+    private void changeLocationSettings() {
         mLocationRequest = LocationRequest.create();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(100000);
@@ -311,7 +345,6 @@ public class MapView extends AppCompatActivity implements
     }
 
 
-
     private void getDeviceLocation() {
         /*
          * Get the best and most recent location of the device, which may be null in rare
@@ -339,7 +372,7 @@ public class MapView extends AppCompatActivity implements
                     }
                 });
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -354,15 +387,15 @@ public class MapView extends AppCompatActivity implements
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                        PackageManager.PERMISSION_GRANTED){
+                        PackageManager.PERMISSION_GRANTED) {
             mLocationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-            ActivityCompat.requestPermissions( this,
-                    new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION },
-                    PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION );
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION);
         }
 
     }
@@ -385,11 +418,11 @@ public class MapView extends AppCompatActivity implements
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        mCheckCoarse = true;
+                    mCheckCoarse = true;
                 }
             }
         }
-        if(mCheckFine && mCheckCoarse){
+        if (mCheckFine && mCheckCoarse) {
             mLocationPermissionGranted = true;
         }
         updateLocationUI();
@@ -409,14 +442,16 @@ public class MapView extends AppCompatActivity implements
                 mLastKnownLocation = null;
                 getLocationPermission();
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(MapView.this,"Clicked Message " +marker.getTitle(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(MapView.this, "Clicked Message " + marker.getTitle(), Toast.LENGTH_SHORT).show();
     }
+
+
 }
 

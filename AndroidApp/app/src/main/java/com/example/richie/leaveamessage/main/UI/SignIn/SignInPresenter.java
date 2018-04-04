@@ -23,7 +23,7 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
     private SignInContract.ViewSignIn signInView;
     public static int RC_SIGN_IN_GOOGLE = 23;
 
-    public SignInPresenter(SignInContract.ViewSignIn signinView){
+    public SignInPresenter(final SignInContract.ViewSignIn signinView){
         mCallbackManager = CallbackManager.Factory.create();
         signInView = signinView;
 
@@ -33,6 +33,7 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         signInView.showMessage("Logged in!");
+                        signinView.startActivity();
                     }
 
                     @Override
@@ -50,12 +51,14 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
     @Override
     public void onStart(GoogleSignInAccount account) {
         if(account != null){
-            signInView.showMessage("Already Signed in with Google!");
+            signInView.startActivity();
+            signInView.showMessage("Logged into Google");
         }
 
-        boolean loggedIn = AccessToken.getCurrentAccessToken() == null;
-        if(!loggedIn){
-            signInView.showMessage("Signed in with Facebook");
+        boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
+        if(loggedIn){
+            signInView.startActivity();
+            signInView.showMessage("Logged into Facebook");
         }
 
     }
