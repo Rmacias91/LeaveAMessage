@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="lightGray">#f2f4f7</color>
+    <color name="white">#ffffff</color>
     <color name = "backgroundStart">#F4C006</color>
     <color name = "backgroundCenter">#F7D764</color>
     <color name = "backgroundEnd">#FBE493</color>
