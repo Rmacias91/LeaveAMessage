@@ -1,5 +1,6 @@
 package com.example.richie.leaveamessage.main.UI.MessageList;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
+import com.example.richie.leaveamessage.main.UI.ReadMessage.ReadMessageView;
 import com.example.richie.leaveamessage.main.UI.SignIn.SignInView;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -45,6 +47,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
 
 
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +93,9 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Log.d(TAG,"CLICKED!");
-        Toast.makeText(this,"Starting activity to read message at pos" + clickedItemIndex,Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ReadMessageView.class);
+        intent.putExtra(ReadMessageView.POSITION_EXTRA,clickedItemIndex);
+        startActivity(intent);
     }
 
     @Override
@@ -101,6 +105,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         mAdapter.notifyDataSetChanged();
     }
 
+    @SuppressLint("RestrictedApi")
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -116,4 +121,5 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         startActivity(i);
         finish();
     }
+
 }

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
 import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
+import com.example.richie.leaveamessage.main.UI.ReadMessage.ReadMessageView;
 import com.example.richie.leaveamessage.main.UI.SignIn.SignInView;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -100,6 +101,7 @@ public class MapView extends AppCompatActivity implements
     private GoogleSignInClient mGoogleSignInClient;
 
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,6 +176,7 @@ public class MapView extends AppCompatActivity implements
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -245,16 +248,20 @@ public class MapView extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //Later Store the markers in a list of Markers. Case we need it. its here.
-
+        Integer index = 0;
         for (Message message : mPresenter.getData()) {
-            Marker listMarkers = mMap.addMarker(new MarkerOptions()
+            Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(message.getLatLng())
                     .title(message.getTitle())
                     .snippet(message.getMessage())
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.message)));
+            marker.setTag(index);
+            index++;
 
         }
         mMap.setOnInfoWindowClickListener(this);
+        //Remove those Buttons
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
 
         // Use a custom info window adapter to handle multiple lines of text in the
@@ -447,9 +454,13 @@ public class MapView extends AppCompatActivity implements
         }
     }
 
+
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(MapView.this, "Clicked Message " + marker.getTitle(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ReadMessageView.class);
+        Integer index = (Integer) marker.getTag();
+        intent.putExtra(ReadMessageView.POSITION_EXTRA,index);
+        startActivity(intent);
     }
 
 

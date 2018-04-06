@@ -81,6 +81,7 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             signInView.showMessage("Logged in!");
+            signInView.startActivity();
 
             // Signed in successfully, show authenticated user interface
 

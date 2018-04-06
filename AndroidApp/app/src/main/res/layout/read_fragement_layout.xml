@@ -8,7 +8,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/title_text"
+        android:id="@+id/title_frag_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -23,7 +23,7 @@
         tools:text="Title of The Message" />
 
     <TextView
-        android:id="@+id/message_text"
+        android:id="@+id/message_frag_text"
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_margin="8dp"
@@ -39,7 +39,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_text"
+        app:layout_constraintTop_toBottomOf="@+id/title_frag_text"
         app:layout_constraintVertical_bias="0.306"
         tools:text="This is a fake Message I'm testing it out for the sake of the yu know" />
 
