@@ -70,7 +70,6 @@ public class MapView extends AppCompatActivity implements
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
-    private Button mWriteMessageBut;
 
 
     // The entry point to the Fused Location Provider.
@@ -116,15 +115,7 @@ public class MapView extends AppCompatActivity implements
 
         setContentView(R.layout.map_view_layout);
 
-        mWriteMessageBut = findViewById(R.id.write_message_but);
-        mWriteMessageBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MapView.this, WriteMessageView.class);
-                startActivity(intent);
-                //Maybe start Activity for Result to update Map view right away?
-            }
-        });
+
 
         // Construct a GeoDataClient
         GeoDataClient geoDC = Places.getGeoDataClient(this);
