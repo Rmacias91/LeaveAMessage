@@ -17,15 +17,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
 import com.example.richie.leaveamessage.main.Model.Message;
 import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
 import com.example.richie.leaveamessage.main.UI.ReadMessage.ReadMessageView;
 import com.example.richie.leaveamessage.main.UI.SignIn.SignInView;
+import com.example.richie.leaveamessage.main.UI.WriteMessage.WriteMessageView;
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -57,9 +58,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Richie on 3/28/2018.
  */
@@ -72,6 +70,7 @@ public class MapView extends AppCompatActivity implements
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
+    private Button mWriteMessageBut;
 
 
     // The entry point to the Fused Location Provider.
@@ -116,6 +115,16 @@ public class MapView extends AppCompatActivity implements
         }
 
         setContentView(R.layout.map_view_layout);
+
+        mWriteMessageBut = findViewById(R.id.write_message_but);
+        mWriteMessageBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapView.this, WriteMessageView.class);
+                startActivity(intent);
+                //Maybe start Activity for Result to update Map view right away?
+            }
+        });
 
         // Construct a GeoDataClient
         GeoDataClient geoDC = Places.getGeoDataClient(this);

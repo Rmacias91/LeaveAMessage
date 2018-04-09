@@ -14,6 +14,8 @@
     <string name="sign_out">Sign Out</string>
     <string name="map_view">Map View</string>
     <string name="comments">Comments</string>
+    <string name="leave_message">Leave A Message</string>
+    <string name="hint">Leave A Message Here</string>
 
 
 </resources>

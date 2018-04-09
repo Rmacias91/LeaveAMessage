@@ -50,6 +50,7 @@
 
         </activity>
         <activity android:name=".main.UI.ReadMessage.ReadMessageView" />
+        <activity android:name=".main.UI.WriteMessage.WriteMessageView" />
 
 
     </application>
