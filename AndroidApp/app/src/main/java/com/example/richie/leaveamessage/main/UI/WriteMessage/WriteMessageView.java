@@ -15,10 +15,9 @@ import com.example.richie.leaveamessage.R;
  * Created by Richie on 4/8/2018.
  */
 
-public class WriteMessageView extends AppCompatActivity{
+public class WriteMessageView extends AppCompatActivity {
     private Button mLeaveMessageBut;
     private EditText mMessageEdit;
-
 
 
     @Override
@@ -31,8 +30,8 @@ public class WriteMessageView extends AppCompatActivity{
         mLeaveMessageBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!TextUtils.isEmpty(mMessageEdit.getText())){
-                    Toast.makeText(WriteMessageView.this,"Message Saved!",Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isEmpty(mMessageEdit.getText())) {
+                    Toast.makeText(WriteMessageView.this, "Message Saved!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
