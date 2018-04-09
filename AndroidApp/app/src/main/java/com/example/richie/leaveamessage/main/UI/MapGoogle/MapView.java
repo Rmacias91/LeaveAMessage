@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -70,6 +71,7 @@ public class MapView extends AppCompatActivity implements
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
+    private FloatingActionButton mLeaveMessageBut;
 
 
     // The entry point to the Fused Location Provider.
@@ -115,7 +117,14 @@ public class MapView extends AppCompatActivity implements
 
         setContentView(R.layout.map_view_layout);
 
-
+        mLeaveMessageBut = findViewById(R.id.message_map_but);
+        mLeaveMessageBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapView.this, WriteMessageView.class);
+                startActivity(intent);
+            }
+        });
 
         // Construct a GeoDataClient
         GeoDataClient geoDC = Places.getGeoDataClient(this);

@@ -24,6 +24,7 @@ public class WriteMessageView extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.write_activity_layout);
 
         mLeaveMessageBut = findViewById(R.id.write_message_but);
         mMessageEdit = findViewById(R.id.write_edit);
