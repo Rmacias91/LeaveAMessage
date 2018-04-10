@@ -7,6 +7,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -18,23 +19,22 @@ import retrofit2.http.Path;
 
 public interface MessageAPIService {
 
-        @GET("message")
-        Call<MessageResponse> getMessages();
+    @GET("message")
+    Call<MessageResponse> getMessages();
 
-        //TODO I think I'm getting an error on API where message response is null and never prints message
-        //Need to debug this :(
-        @GET("message/{id}")
-        Call<Message> getMessage(@Path("id") int messageID);
+    //TODO I think I'm getting an error on API where message response is null and never prints message
+    @GET("message/{id}")
+    Call<MessageResponse> getMessage(@Path("id") int messageID);
 
-        //Might need GSON to convert
-        @POST("message")
-        Call<Message> createMessage(@Body Message message);
+    //TODO Update API to return ID of newly created post. No way to identify post id
+    @POST("message")
+    Call<MessageResponse> createMessage(@Body Message message);
 
-        @DELETE("message/{id}")
-        Call<Message> deleteMessage(@Path("id") int messageID);
+    @DELETE("message/{id}")
+    Call<MessageResponse> deleteMessage(@Path("id") int messageID);
 
-        @PUT("message/{id}")
-        Call<Message> updateMessage(@Path("id") int messageID);
+    @PUT("message/{id}")
+    Call<MessageResponse> updateMessage(@Path("id") int messageID,@Body Message message);
 
 
 }

@@ -14,7 +14,12 @@ import java.util.List;
 public class MessageResponse {
     private Boolean success;
     private List<Message> messages;
+    private String message;
 
+
+    public String getMessage() {
+        return message;
+    }
 
     public Boolean getSuccess() {
         return success;
@@ -23,6 +28,8 @@ public class MessageResponse {
     public List<Message> getMessages() {
         return messages;
     }
+
+
 
 
 }

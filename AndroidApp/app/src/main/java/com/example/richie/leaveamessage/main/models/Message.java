@@ -1,6 +1,7 @@
 package com.example.richie.leaveamessage.main.models;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.Date;
 import java.util.List;
@@ -17,8 +18,9 @@ public class Message {
     private String distance;
     private String Lat;
     private String Lon;
+    @SerializedName("Date")
     private String date;
-    private List<Message> messages;
+
 
     //TODO Implement a Date generator
     //TODO Remove this constructor and distance. No need
@@ -26,12 +28,16 @@ public class Message {
         this.Message = message;
         this.distance = distance;
     }
+    //TODO Fix constructor to have a date param
      public Message(String title, String message,String lat, String lon){
         this.title = title;
         this.Message = message;
         this.Lat = lat;
         this.Lon = lon;
+        this.date = "2018-04-10";
      }
+
+
 
 //        DateFormat format = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss.sssZ", Locale.ENGLISH);
 //        try {
@@ -66,11 +72,9 @@ public class Message {
     }
 
 
-    public List<com.example.richie.leaveamessage.main.models.Message> getMessages() {
-        return messages;
-    }
-
     public Boolean getSuccess() {
         return success;
     }
+
+    public void setMessage(String message){this.Message = message;}
 }

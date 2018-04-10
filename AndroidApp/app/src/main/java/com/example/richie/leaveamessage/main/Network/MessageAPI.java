@@ -24,6 +24,7 @@ public class MessageAPI {
     public MessageAPIService service;
     private List<Message> messages;
 
+    //TODO I should probably make this class/ methods static since its a helper class!
 
     public MessageAPI() {
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -39,7 +40,7 @@ public class MessageAPI {
         service = retrofit.create(MessageAPIService.class);
     }
 
-    public List<Message> getMessages() {
+    public void getMessages() {
         Call<MessageResponse> call = service.getMessages();
         call.enqueue(new Callback<MessageResponse>() {
             @Override
@@ -59,8 +60,81 @@ public class MessageAPI {
                 Log.d(TAG, t.getMessage());
             }
         });
-        return messages;
+
+    }
+
+    //Need to fix getMessage in APi not sure how its returned.
+    public void getMessage(int id){
+        Call<MessageResponse> call = service.getMessage(id);
+        call.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if (response.code() == 200) {
+                    if (response.body().getSuccess()) {
+                        messages = response.body().getMessages();
+                    }
+                    Log.d(TAG, "SUCCESS!" + messages.get(0).getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+
+    }
+
+    public void createMessage(Message message){
+        Call<MessageResponse> call = service.createMessage(message);
+        call.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if(response.code()==200){
+                    Log.d(TAG, "SUCCESS!" + response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
     }
 
 
+    public void updateMessage(int id,Message message){
+        Call<MessageResponse> call = service.updateMessage(id,message);
+        call.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if(response.code()==200){
+                    Log.d(TAG,"Success!"+response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+
+    }
+
+    public void deleteMessage(int id){
+        Call<MessageResponse> call = service.deleteMessage(id);
+        call.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                if(response.code()==200){
+                    Log.d(TAG,"Success!"+response.body().getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+    }
 }
