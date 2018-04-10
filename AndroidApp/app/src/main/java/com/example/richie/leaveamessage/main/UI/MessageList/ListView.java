@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,7 +72,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
          messageAPI= new MessageAPI();
-         Message onlineMessages = messageAPI.getMessages();
+         List<Message> onlineMessages = messageAPI.getMessages();
+
 
 
     }

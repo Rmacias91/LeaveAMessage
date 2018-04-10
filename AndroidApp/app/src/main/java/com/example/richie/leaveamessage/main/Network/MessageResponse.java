@@ -12,20 +12,17 @@ import java.util.List;
  */
 
 public class MessageResponse {
-    List<Message> messages;
+    private Boolean success;
+    private List<Message> messages;
 
 
-
-    public MessageResponse(){
-        messages = new ArrayList<>();
+    public Boolean getSuccess() {
+        return success;
     }
 
-    public static MessageResponse parseJSON(String response){
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
-        gsonBuilder.setDateFormat(ISO_FORMAT);
-        Gson gson = gsonBuilder.create();
-
-        return gson.fromJson(response,MessageResponse.class);
+    public List<Message> getMessages() {
+        return messages;
     }
+
+
 }
