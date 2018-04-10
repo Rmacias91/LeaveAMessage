@@ -18,8 +18,8 @@ import retrofit2.http.Path;
 
 public interface MessageAPIService {
 
-        @GET("message/")
-        Call<List<Message>> getMessages();
+        @GET("message")
+        Call<Message> getMessages();
 
         //TODO I think I'm getting an error on API where message response is null and never prints message
         //Need to debug this :(

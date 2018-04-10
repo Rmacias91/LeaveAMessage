@@ -19,9 +19,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class MessageAPI {
+    public static final String TAG = MessageAPI.class.getSimpleName();
 public static final String BASE_URL = "http://default-environment.dber9pmkbe.us-east-2.elasticbeanstalk.com/";
     public MessageAPIService service;
-    private List<Message> messages;
+    private Message messages;
     public MessageAPI(){
         GsonBuilder gsonBuilder = new GsonBuilder();
         String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
@@ -36,21 +37,20 @@ public static final String BASE_URL = "http://default-environment.dber9pmkbe.us-
          service = retrofit.create(MessageAPIService.class);
     }
 
-    public List<Message> getMessages(){
-        Call<List<Message>> call = service.getMessages();
-        call.enqueue(new Callback<List<Message>>() {
+    public Message getMessages(){
+        Call<Message> call = service.getMessages();
+        call.enqueue(new Callback<Message>() {
             @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+            public void onResponse(Call<Message> call, Response<Message> response) {
                 int statusCode = response.code();
                 //if status code is good.
                 messages = response.body();
-                Log.d("MessageApi","SUCCESS!"+messages.get(0));
+                Log.d(TAG,"SUCCESS!"+ messages.getMessages().get(0));
             }
-
+//4/10/18 I was able to fix my LEEco phone to Log! I may cry... dial *#*#76937#*#*
             @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
-                Log.d("MessageApi","Failed");
-
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.d(TAG,t.getMessage());
             }
         });
         return messages;

@@ -3,19 +3,22 @@ package com.example.richie.leaveamessage.main.models;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Richie on 3/23/2018.
  */
 
 public class Message {
+    private Boolean success;
     private int id;
     private String title;
     private String Message;
     private String distance;
     private String Lat;
     private String Lon;
-    private Date date;
+    private String date;
+    private List<Message> messages;
 
     //TODO Implement a Date generator
     //TODO Remove this constructor and distance. No need
@@ -58,9 +61,16 @@ public class Message {
 
     public int getId(){return id;}
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
 
+    public List<com.example.richie.leaveamessage.main.models.Message> getMessages() {
+        return messages;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
 }

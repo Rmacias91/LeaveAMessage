@@ -71,7 +71,8 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
          messageAPI= new MessageAPI();
-         List<Message> onlineMessages = messageAPI.getMessages();
+         Message onlineMessages = messageAPI.getMessages();
+
 
     }
 
