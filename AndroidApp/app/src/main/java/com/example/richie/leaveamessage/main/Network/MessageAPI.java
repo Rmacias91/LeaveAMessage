@@ -1,5 +1,16 @@
 package com.example.richie.leaveamessage.main.Network;
 
+import android.util.Log;
+
+import com.example.richie.leaveamessage.main.models.Message;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -8,11 +19,44 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class MessageAPI {
+public static final String BASE_URL = "http://default-environment.dber9pmkbe.us-east-2.elasticbeanstalk.com/";
+    public MessageAPIService service;
+    private List<Message> messages;
+    public MessageAPI(){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+        gsonBuilder.setDateFormat(ISO_FORMAT);
+        Gson gson = gsonBuilder.create();
 
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://Default-Environment.dber9pmkbe.us-east-2.elasticbeanstalk.com")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
 
-    MessageAPIService service = retrofit.create(MessageAPIService.class);
+         service = retrofit.create(MessageAPIService.class);
+    }
+
+    public List<Message> getMessages(){
+        Call<List<Message>> call = service.getMessages();
+        call.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                int statusCode = response.code();
+                //if status code is good.
+                messages = response.body();
+                Log.d("MessageApi","SUCCESS!"+messages.get(0));
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                Log.d("MessageApi","Failed");
+
+            }
+        });
+        return messages;
+    }
+
+
+
+
 }

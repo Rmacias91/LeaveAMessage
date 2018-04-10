@@ -1,6 +1,6 @@
 package com.example.richie.leaveamessage.main.Network;
 
-import com.example.richie.leaveamessage.main.Model.Message;
+import com.example.richie.leaveamessage.main.models.Message;
 
 import java.util.List;
 
@@ -21,6 +21,8 @@ public interface MessageAPIService {
         @GET("message/")
         Call<List<Message>> getMessages();
 
+        //TODO I think I'm getting an error on API where message response is null and never prints message
+        //Need to debug this :(
         @GET("message/{id}")
         Call<Message> getMessage(@Path("id") int messageID);
 

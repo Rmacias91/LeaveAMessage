@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,7 +15,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
-import com.example.richie.leaveamessage.main.Model.Message;
+import com.example.richie.leaveamessage.main.Network.MessageAPI;
+import com.example.richie.leaveamessage.main.models.Message;
 import com.example.richie.leaveamessage.main.UI.ReadMessage.ReadMessageView;
 import com.example.richie.leaveamessage.main.UI.SignIn.SignInView;
 import com.facebook.AccessToken;
@@ -45,6 +45,9 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
     private ListViewPresenter mPresneter;
     private GoogleSignInClient mGoogleSignInClient;
 
+    private MessageAPI messageAPI;
+
+
 
 
     @SuppressLint("RestrictedApi")
@@ -66,6 +69,9 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         //Used for Sign out.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+
+         messageAPI= new MessageAPI();
+         List<Message> onlineMessages = messageAPI.getMessages();
 
     }
 

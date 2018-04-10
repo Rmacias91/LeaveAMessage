@@ -1,4 +1,4 @@
-package com.example.richie.leaveamessage.main.Model;
+package com.example.richie.leaveamessage.main.models;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -9,41 +9,54 @@ import java.util.Date;
  */
 
 public class Message {
+    private int id;
     private String title;
-    private String message;
+    private String Message;
     private String distance;
-    private String lat;
-    private String lon;
+    private String Lat;
+    private String Lon;
     private Date date;
 
     //TODO Implement a Date generator
     //TODO Remove this constructor and distance. No need
     public Message(String message, String distance){
-        this.message = message;
+        this.Message = message;
         this.distance = distance;
     }
      public Message(String title, String message,String lat, String lon){
         this.title = title;
-        this.message = message;
-        this.lat = lat;
-        this.lon = lon;
+        this.Message = message;
+        this.Lat = lat;
+        this.Lon = lon;
      }
+
+//        DateFormat format = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss.sssZ", Locale.ENGLISH);
+//        try {
+//            this.date = format.parse(date);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
 
 
     public String getTitle(){
          return title;
     }
     public String getMessage() {
-        return message;
+        return Message;
     }
 //TODO Implement a function to calculate Distance. Every time get distance is called?
     public String getDistance() {
         return distance;
     }
 
-    public LatLng getLatLng(){
-        return new LatLng(Double.parseDouble(lat),Double.parseDouble(lon));
-    }
+    public LatLng getLatLng(){return new LatLng(Double.parseDouble(Lat),Double.parseDouble(Lon));}
+
+    public String getLat(){return Lat;}
+
+    public String getLon(){return Lon;}
+
+    public int getId(){return id;}
 
     public Date getDate() {
         return date;

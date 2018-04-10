@@ -1,6 +1,6 @@
 package com.example.richie.leaveamessage.main.UI.ReadMessage;
 
-import com.example.richie.leaveamessage.main.Model.Message;
+import com.example.richie.leaveamessage.main.models.Message;
 
 import java.util.List;
 

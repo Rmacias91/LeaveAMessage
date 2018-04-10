@@ -11,11 +11,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.example.richie.leaveamessage.R;
-import com.example.richie.leaveamessage.main.Model.Message;
-import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.richie.leaveamessage.main.models.Message;
 
 /**
  * Created by Richie on 4/3/2018.
