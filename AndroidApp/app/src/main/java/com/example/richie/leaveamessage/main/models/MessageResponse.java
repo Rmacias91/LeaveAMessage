@@ -1,4 +1,4 @@
-package com.example.richie.leaveamessage.main.Network;
+package com.example.richie.leaveamessage.main.models;
 
 import com.example.richie.leaveamessage.main.models.Message;
 import com.google.gson.Gson;

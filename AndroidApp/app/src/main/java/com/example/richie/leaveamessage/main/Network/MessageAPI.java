@@ -3,6 +3,7 @@ package com.example.richie.leaveamessage.main.Network;
 import android.util.Log;
 
 import com.example.richie.leaveamessage.main.models.Message;
+import com.example.richie.leaveamessage.main.models.MessageResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

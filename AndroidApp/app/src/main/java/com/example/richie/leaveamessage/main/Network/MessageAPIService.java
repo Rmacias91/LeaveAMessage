@@ -1,13 +1,11 @@
 package com.example.richie.leaveamessage.main.Network;
 
 import com.example.richie.leaveamessage.main.models.Message;
-
-import java.util.List;
+import com.example.richie.leaveamessage.main.models.MessageResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
