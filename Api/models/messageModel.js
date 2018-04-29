@@ -11,7 +11,9 @@ exports.addMessage = function(Lat,Lon, Message, postDate, done){
     db.get().query('INSERT INTO messages (Lat,Lon,Message,Date) VALUES (?,?,?,?)',
         values, function(err,result){
             if(err) return done(err);
-            else return done(null,result.id);
+            else{
+                return done(null,result.insertId);
+            }
         })
 }
 

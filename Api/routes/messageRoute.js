@@ -45,8 +45,11 @@ router.post('/',(req,res,next) => {
             res.json({success: false, message: `Failed
             to create a new Message. Error: ${err}`});
         }
-        else
-        res.json({success:true, message:"Added Successfully."});
+        else{
+            console.log("MessageResponse in addMessage "+messageRes);
+            console.log("Response id is:" + res);
+            res.json({success:true, message:"Added Message", insertId:messageRes});
+        }
     });
 });
 
