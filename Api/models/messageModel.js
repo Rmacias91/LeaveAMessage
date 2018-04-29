@@ -25,10 +25,14 @@ exports.getAllMessages = function(done){
 }
 
 exports.getMessageById = function(id,done){
+    console.log("Id is: "+ id );
     db.get().query('SELECT * FROM messages WHERE id = '+id),
         function(err,row){
         if(err) return done(err);
-        else return done(null,row);
+        else{
+        console.log("Id is: "+ id + " row respone is "+ row)
+        return done(null,row);
+        }
     }
 }
 

@@ -20,14 +20,16 @@ router.get('/',(req,res) => {
 
 router.get('/:id',(req,res) => {
     let id = req.params.id;
+    console.log("I GOT CALLED id is "+ id);
     message.getMessageById(id,(err,message) => {
         if(err){
             res.json({success:false,message: `Failed
             to load message by ID. Error: ${err}` });
         }
         else if(message){
+            console.log("Message is route is: " + message);
             res.write(JSON.stringify({success:true,
-            message},null,2));
+            message:message},null,2));
             res.end();
         }
         else
