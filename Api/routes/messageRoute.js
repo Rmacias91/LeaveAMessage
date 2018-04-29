@@ -26,14 +26,15 @@ router.get('/:id',(req,res) => {
             res.json({success:false,message: `Failed
             to load message by ID. Error: ${err}` });
         }
-        else if(message){
+        else if(message!=""){
             console.log("Message is route is: " + message);
             res.write(JSON.stringify({success:true,
             message:message},null,2));
             res.end();
         }
-        else
-            res.json({success:false});
+        else{
+            res.json({success:false,message:"ID: "+ id + "does not exist"});
+        }
     });
 });
 

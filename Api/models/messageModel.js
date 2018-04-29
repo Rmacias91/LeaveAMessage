@@ -26,14 +26,17 @@ exports.getAllMessages = function(done){
 
 exports.getMessageById = function(id,done){
     console.log("Id is: "+ id );
-    db.get().query('SELECT * FROM messages WHERE id = '+id),
+    db.get().query('SELECT * FROM messages WHERE id = '+id,
         function(err,row){
-        if(err) return done(err);
+        if(err){
+            console.log("ERROR thrown "+ err);
+            return done(err);
+        }
         else{
         console.log("Id is: "+ id + " row respone is "+ row)
         return done(null,row);
         }
-    }
+    });
 }
 
 //Gotta make an SQL SELECT Statement to look for nearby locations.
