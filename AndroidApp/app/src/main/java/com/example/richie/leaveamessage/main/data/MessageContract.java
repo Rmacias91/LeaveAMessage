@@ -1,5 +1,6 @@
 package com.example.richie.leaveamessage.main.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -7,6 +8,10 @@ import android.provider.BaseColumns;
  */
 
 public class MessageContract {
+    public static final String CONTENT_AUTHORITY = "com.example.richie.leaveamessage";
+
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String PATH_MESSAGE = "message";
 
     public static final class MessageEntry implements BaseColumns {
 
@@ -17,6 +22,5 @@ public class MessageContract {
         public static final String COLUMN_DATE = "date";
         public static final String COLUMN_LAT = "lat";
         public static final String COLUMN_LON = "lon";
-
     }
 }
