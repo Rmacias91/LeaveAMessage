@@ -20,11 +20,9 @@ public interface MessageAPIService {
     @GET("message")
     Call<MessageResponse> getMessages();
 
-    //TODO I think I'm getting an error on API where message response is null and never prints message
     @GET("message/{id}")
     Call<MessageResponse> getMessage(@Path("id") int messageID);
 
-    //TODO Update API to return ID of newly created post. No way to identify post id
     @POST("message")
     Call<MessageResponse> createMessage(@Body Message message);
 
