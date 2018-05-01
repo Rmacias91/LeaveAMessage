@@ -64,7 +64,6 @@ public class MessageAPI {
 
     }
 
-    //Need to fix getMessage in APi not sure how its returned.
     public void getMessage(int id){
         Call<MessageResponse> call = service.getMessage(id);
         call.enqueue(new Callback<MessageResponse>() {

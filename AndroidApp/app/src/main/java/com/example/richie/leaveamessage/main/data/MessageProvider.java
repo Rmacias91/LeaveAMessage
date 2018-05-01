@@ -1,6 +1,7 @@
 package com.example.richie.leaveamessage.main.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -66,18 +67,63 @@ public class MessageProvider extends ContentProvider {
                             rowsInserted++;
                         }
                     }
-
+                    db.setTransactionSuccessful();
                 }finally {
-
+                    db.endTransaction();
                 }
-                default: return super.bulkInsert(uri,values);
+
+                //As Long as Context is passed and not null, Content Resolver will not be null
+                if (rowsInserted > 0) getContext().getContentResolver().notifyChange(uri, null);
+
+                return rowsInserted;
+
+            default: return super.bulkInsert(uri,values);
         }
     }
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+
+        Cursor cursor;
+
+        switch(sUriMatcher.match(uri)){
+
+            case CODE_MESSAGE_WITH_ID:
+                String idString = uri.getLastPathSegment();
+
+                String[] selectionArguments = new String[]{idString};
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        MessageContract.MessageEntry.TABLE_NAME,
+                        projection,
+                        MessageContract.MessageEntry.COLUMN_ID + " = ?",
+                        selectionArguments,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+
+            case CODE_MESSAGE:
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        MessageContract.MessageEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+
+
+            default:
+                throw new UnsupportedOperationException("Unknown URI: "+uri);
+        }
+
+
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
+        return cursor;
     }
 
     @Nullable
@@ -89,12 +135,71 @@ public class MessageProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+
+        Uri returnUri;
+        switch(sUriMatcher.match(uri)){
+
+            case CODE_MESSAGE_WITH_ID:
+                long _id = db.insert(MessageContract.MessageEntry.TABLE_NAME,null,contentValues);
+                if(_id>0){
+                    returnUri = ContentUris.withAppendedId(MessageContract.MessageEntry.CONTENT_URI,_id);
+
+                }else{
+                    throw new android.database.SQLException("Failed to insert row into "+ uri);
+                }
+
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: "+ uri);
+
+        }
+
+        getContext().getContentResolver().notifyChange(uri,null);
+        return returnUri;
+
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        /* Users of the delete method will expect the number of rows deleted to be returned. */
+        int numRowsDeleted;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+
+        /*
+         * If we pass null as the selection to SQLiteDatabase#delete, our entire table will be
+         * deleted. However, if we do pass null and delete all of the rows in the table, we won't
+         * know how many rows were deleted. According to the documentation for SQLiteDatabase,
+         * passing "1" for the selection will delete all rows and return the number of rows
+         * deleted, which is what the caller of this method expects.
+         */
+        if (null == selection) selection = "1";
+
+        switch (sUriMatcher.match(uri)) {
+
+            case CODE_MESSAGE:
+                numRowsDeleted = db.delete(
+                        MessageContract.MessageEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+
+                break;
+
+            case CODE_MESSAGE_WITH_ID:
+                String idString = uri.getLastPathSegment();
+                numRowsDeleted = db.delete(MessageContract.MessageEntry.TABLE_NAME, "_id=?", new String[]{idString});
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        /* If we actually deleted any rows, notify that a change has occurred to this URI */
+        if (numRowsDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numRowsDeleted;
     }
 
     @Override

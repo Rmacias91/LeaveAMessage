@@ -15,6 +15,10 @@ public class MessageContract {
 
     public static final class MessageEntry implements BaseColumns {
 
+        // TaskEntry content URI = base content URI + path
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_MESSAGE).build();
+
         public static final String TABLE_NAME = "messages";
 
         public static final String COLUMN_ID = "message_id";
