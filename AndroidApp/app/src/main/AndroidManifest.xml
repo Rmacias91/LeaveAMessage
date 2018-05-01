@@ -52,6 +52,11 @@
         <activity android:name=".main.UI.ReadMessage.ReadMessageView" />
         <activity android:name=".main.UI.WriteMessage.WriteMessageView" />
 
+        <provider
+            android:name=".main.data.MessageProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"/>
+
 
     </application>
 </manifest>

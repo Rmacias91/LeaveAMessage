@@ -17,5 +17,9 @@
     <string name="leave_message">Leave A Message</string>
     <string name="hint">Leave A Message Here</string>
 
+    <!--Content Provider -->
+    <string name="content_authority">com.example.richie.leaveamessage</string>
+
+
 
 </resources>

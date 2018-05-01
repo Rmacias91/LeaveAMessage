@@ -187,7 +187,8 @@ public class MessageProvider extends ContentProvider {
 
             case CODE_MESSAGE_WITH_ID:
                 String idString = uri.getLastPathSegment();
-                numRowsDeleted = db.delete(MessageContract.MessageEntry.TABLE_NAME, "_id=?", new String[]{idString});
+                numRowsDeleted = db.delete(MessageContract.MessageEntry.TABLE_NAME,
+                        MessageContract.MessageEntry.COLUMN_ID+"=?", new String[]{idString});
                 break;
 
             default:
@@ -198,12 +199,38 @@ public class MessageProvider extends ContentProvider {
         if (numRowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
-
         return numRowsDeleted;
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
+
+        //Keep track of if an update occurs
+        int tasksUpdated;
+
+        // match code
+        int match = sUriMatcher.match(uri);
+
+        switch (match) {
+            case CODE_MESSAGE_WITH_ID:
+                //update a single task by getting the id
+                String id = uri.getLastPathSegment();
+                //using selections
+                tasksUpdated = mOpenHelper.getWritableDatabase().update(MessageContract.MessageEntry.TABLE_NAME, values,
+                        MessageContract.MessageEntry.COLUMN_ID+"=?", new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (tasksUpdated != 0) {
+            //set notifications if a task was updated
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        // return number of tasks updated
+        return tasksUpdated;
+
     }
 }
