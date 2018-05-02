@@ -27,11 +27,13 @@ public class MessageDbHelper extends SQLiteOpenHelper {
                         MessageEntry.COLUMN_ID    +" INTEGER PRIMARY KEY," +
                         MessageEntry.COLUMN_LAT + " FLOAT NOT NULL," +
                         MessageEntry.COLUMN_LON + " FLOAT NOT NULL," +
-                        MessageEntry.COLUMN_MESSAGE + "VARCHAR NOT NULL," +
-                        MessageEntry.COLUMN_DATE + "DATE NOT NULL);";
+                        MessageEntry.COLUMN_MESSAGE + " VARCHAR NOT NULL," +
+                        MessageEntry.COLUMN_DATE + " DATE NOT NULL);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MESSAGE_TABLE);
     }
+
+    //CREATE TABLE messages(message_id INTEGER PRIMARY KEY,lat FLOAT NOT NULL,lon FLOAT NOT NULL,messageVARCHAR NOT NULL,dateDATE NOT NULL);
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
