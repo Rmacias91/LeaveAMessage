@@ -57,7 +57,7 @@ public class SignInView extends AppCompatActivity implements View.OnClickListene
         loginButtonFb.setReadPermissions(Arrays.asList(EMAIL));
 
         //Presenter
-        signInPresenter = new SignInPresenter(this);
+        signInPresenter = new SignInPresenter(this,getContentResolver());
     }
 
     @Override

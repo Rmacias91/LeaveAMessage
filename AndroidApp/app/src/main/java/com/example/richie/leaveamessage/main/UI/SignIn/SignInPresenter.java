@@ -1,10 +1,15 @@
 package com.example.richie.leaveamessage.main.UI.SignIn;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.util.Log;
 
 import com.example.richie.leaveamessage.main.Network.MessageAPI;
+import com.example.richie.leaveamessage.main.Util.MessageUtil;
+import com.example.richie.leaveamessage.main.data.MessageContract;
+import com.example.richie.leaveamessage.main.models.Message;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -14,6 +19,8 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.*;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+
+import java.util.List;
 
 /**
  * Created by Richie on 3/16/2018.
@@ -25,11 +32,13 @@ public class SignInPresenter implements SignInContract.PresenterSignIn,MessageAP
     private SignInContract.ViewSignIn signInView;
     public static int RC_SIGN_IN_GOOGLE = 23;
     private MessageAPI messageAPI;
+    private ContentResolver mContentResolver;
 
-    public SignInPresenter(final SignInContract.ViewSignIn signinView) {
+    public SignInPresenter(final SignInContract.ViewSignIn signinView, ContentResolver contentResolver) {
         mCallbackManager = CallbackManager.Factory.create();
         signInView = signinView;
         messageAPI = new MessageAPI(this);
+        mContentResolver = contentResolver;
 
 
         LoginManager.getInstance().registerCallback(mCallbackManager,
@@ -106,8 +115,8 @@ public class SignInPresenter implements SignInContract.PresenterSignIn,MessageAP
     @Override
     public void onSuccess(Object response) {
         //Update local db with api
-        signInView.showMessage("Updated Local DB");
-        
+        ContentValues[] contentValues = MessageUtil.messagesToContentVals((List<Message>)response);
+        mContentResolver.bulkInsert(MessageContract.MessageEntry.CONTENT_URI,contentValues);
 
     }
 
