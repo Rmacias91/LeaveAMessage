@@ -72,7 +72,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
-        messageAPI = new MessageAPI();
+       // messageAPI = new MessageAPI();
         //messageAPI.getMessages();
         //Message testMessage = new Message("title","Im at Capitial One Cafe Tuesdays","41.9456354","-87.6679754");
         //testMessage.setMessage("3 Hours later still here!");

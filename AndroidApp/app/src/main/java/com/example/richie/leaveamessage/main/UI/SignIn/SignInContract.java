@@ -28,5 +28,8 @@ public interface SignInContract {
         void startActivity();
 
 
+
+
+
     }
 }

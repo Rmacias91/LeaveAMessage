@@ -24,10 +24,19 @@ public class MessageAPI {
     public static final String BASE_URL = "http://default-environment.dber9pmkbe.us-east-2.elasticbeanstalk.com/";
     public MessageAPIService service;
     private List<Message> messages;
+    private RequestListener mListener;
 
     //TODO I should probably make this class/ methods static since its a helper class!
 
-    public MessageAPI() {
+    public interface RequestListener<T> {
+
+        void onSuccess(T response);
+
+        void onFailure();
+    }
+
+    public MessageAPI(RequestListener listener) {
+        mListener = listener;
         GsonBuilder gsonBuilder = new GsonBuilder();
         String ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
         gsonBuilder.setDateFormat(ISO_FORMAT);
@@ -50,6 +59,7 @@ public class MessageAPI {
                 if (response.code() == 200) {
                     if (response.body().getSuccess()) {
                         messages = response.body().getMessages();
+                        mListener.onSuccess(messages);
                     }
                     Log.d(TAG, "SUCCESS!" + messages.get(0).getMessage());
                 }
@@ -59,12 +69,13 @@ public class MessageAPI {
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Log.d(TAG, t.getMessage());
+                mListener.onFailure();
             }
         });
 
     }
 
-    public void getMessage(int id){
+    public void getMessage(int id) {
         Call<MessageResponse> call = service.getMessage(id);
         call.enqueue(new Callback<MessageResponse>() {
             @Override
@@ -85,12 +96,12 @@ public class MessageAPI {
 
     }
 
-    public void createMessage(Message message){
+    public void createMessage(Message message) {
         Call<MessageResponse> call = service.createMessage(message);
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if(response.code()==200){
+                if (response.code() == 200) {
                     Log.d(TAG, "SUCCESS!" + response.body().getMessage());
                 }
             }
@@ -103,13 +114,13 @@ public class MessageAPI {
     }
 
 
-    public void updateMessage(int id,Message message){
-        Call<MessageResponse> call = service.updateMessage(id,message);
+    public void updateMessage(int id, Message message) {
+        Call<MessageResponse> call = service.updateMessage(id, message);
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if(response.code()==200){
-                    Log.d(TAG,"Success!"+response.body().getMessage());
+                if (response.code() == 200) {
+                    Log.d(TAG, "Success!" + response.body().getMessage());
                 }
             }
 
@@ -121,13 +132,13 @@ public class MessageAPI {
 
     }
 
-    public void deleteMessage(int id){
+    public void deleteMessage(int id) {
         Call<MessageResponse> call = service.deleteMessage(id);
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if(response.code()==200){
-                    Log.d(TAG,"Success!"+response.body().getMessage());
+                if (response.code() == 200) {
+                    Log.d(TAG, "Success!" + response.body().getMessage());
                 }
             }
 
@@ -137,4 +148,7 @@ public class MessageAPI {
             }
         });
     }
+
 }
+
+

@@ -1,8 +1,10 @@
 package com.example.richie.leaveamessage.main.UI.SignIn;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
 
+import com.example.richie.leaveamessage.main.Network.MessageAPI;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -17,15 +19,17 @@ import com.google.android.gms.tasks.Task;
  * Created by Richie on 3/16/2018.
  */
 
-public class SignInPresenter implements SignInContract.PresenterSignIn{
+public class SignInPresenter implements SignInContract.PresenterSignIn,MessageAPI.RequestListener {
     private static final String TAG = SignInPresenter.class.getSimpleName();
     private CallbackManager mCallbackManager;
     private SignInContract.ViewSignIn signInView;
     public static int RC_SIGN_IN_GOOGLE = 23;
+    private MessageAPI messageAPI;
 
-    public SignInPresenter(final SignInContract.ViewSignIn signinView){
+    public SignInPresenter(final SignInContract.ViewSignIn signinView) {
         mCallbackManager = CallbackManager.Factory.create();
         signInView = signinView;
+        messageAPI = new MessageAPI(this);
 
 
         LoginManager.getInstance().registerCallback(mCallbackManager,
@@ -38,7 +42,7 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
 
                     @Override
                     public void onCancel() {
-                        // App code
+
                     }
 
                     @Override
@@ -50,16 +54,21 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
 
     @Override
     public void onStart(GoogleSignInAccount account) {
-        if(account != null){
+        if (account != null) {
             signInView.startActivity();
             signInView.showMessage("Logged into Google");
         }
 
         boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
-        if(loggedIn){
+        if (loggedIn) {
             signInView.startActivity();
             signInView.showMessage("Logged into Facebook");
         }
+
+        //API CALL TO UPDATE DB
+        messageAPI.getMessages();
+
+
 
     }
 
@@ -69,10 +78,9 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
         if (requestCode == RC_SIGN_IN_GOOGLE) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
-            Task<GoogleSignInAccount> task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(data);
+            @SuppressLint("RestrictedApi") Task<GoogleSignInAccount> task = com.google.android.gms.auth.api.signin.GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
-        }
-        else{
+        } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -93,5 +101,19 @@ public class SignInPresenter implements SignInContract.PresenterSignIn{
 
         }
 
+    }
+
+    @Override
+    public void onSuccess(Object response) {
+        //Update local db with api
+        signInView.showMessage("Updated Local DB");
+        
+
+    }
+
+    @Override
+    public void onFailure() {
+        //else toast Error
+        signInView.showMessage("Error Retrieving messages");
     }
 }
