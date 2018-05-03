@@ -134,7 +134,7 @@ public class MapView extends AppCompatActivity implements
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mPresenter = new MapPresenter(this);
+        mPresenter = new MapPresenter(this,getContentResolver());
 
         setUpLocationCallback();
 

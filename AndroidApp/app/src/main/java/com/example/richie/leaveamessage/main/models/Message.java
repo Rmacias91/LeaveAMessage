@@ -37,14 +37,15 @@ public class Message {
         this.date = "2018-04-10";
      }
 
+     public Message(String title, int id, double lat, double lon, String date, String message){
+         this.title = title;
+         this.id=id;
+         this.Lat = Double.toString(lat);
+         this.Lon = Double.toString(lon);
+         this.date = date;
+         this.Message = message;
+     }
 
-
-//        DateFormat format = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss.sssZ", Locale.ENGLISH);
-//        try {
-//            this.date = format.parse(date);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
 
 
 

@@ -115,8 +115,9 @@ public class SignInPresenter implements SignInContract.PresenterSignIn,MessageAP
     @Override
     public void onSuccess(Object response) {
         //Update local db with api
-        ContentValues[] contentValues = MessageUtil.messagesToContentVals((List<Message>)response);
-        mContentResolver.bulkInsert(MessageContract.MessageEntry.CONTENT_URI,contentValues);
+        List<Message> messages = (List<Message>)response;
+        ContentValues[] contentValues = MessageUtil.messagesToContentVals(messages);
+        int rowsInserted = mContentResolver.bulkInsert(MessageContract.MessageEntry.CONTENT_URI,contentValues);
 
     }
 
