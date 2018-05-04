@@ -2,6 +2,7 @@ package com.example.richie.leaveamessage.main.models;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.annotations.SerializedName;
+import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.Date;
 import java.util.List;
@@ -10,8 +11,7 @@ import java.util.List;
  * Created by Richie on 3/23/2018.
  */
 
-public class Message {
-    private Boolean success;
+public class Message implements ClusterItem {
     private int id;
     private String title;
     private String Message;
@@ -47,11 +47,20 @@ public class Message {
      }
 
 
-
+    @Override
+    public LatLng getPosition() {
+        return new LatLng(Double.parseDouble(Lat),Double.parseDouble(Lon));
+    }
 
     public String getTitle(){
          return title;
     }
+
+    @Override
+    public String getSnippet() {
+        return Message;
+    }
+
     public String getMessage() {
         return Message;
     }
@@ -60,7 +69,6 @@ public class Message {
         return distance;
     }
 
-    public LatLng getLatLng(){return new LatLng(Double.parseDouble(Lat),Double.parseDouble(Lon));}
 
     public String getLat(){return Lat;}
 
@@ -70,11 +78,6 @@ public class Message {
 
     public String getDate() {
         return date;
-    }
-
-
-    public Boolean getSuccess() {
-        return success;
     }
 
     public void setMessage(String message){this.Message = message;}

@@ -57,6 +57,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.maps.android.clustering.ClusterManager;
 
 /**
  * Created by Richie on 3/28/2018.
@@ -66,11 +67,12 @@ public class MapView extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnInfoWindowClickListener,
         MapContract.ViewMap {
-//TODO Any Logic with Data Lets Refactor to MVP
+    //TODO Any Logic with Data Lets Refactor to MVP
     private static final String TAG = MapView.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
     private FloatingActionButton mLeaveMessageBut;
+    private ClusterManager<Message> mClusterManager;
 
 
     // The entry point to the Fused Location Provider.
@@ -134,7 +136,7 @@ public class MapView extends AppCompatActivity implements
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        mPresenter = new MapPresenter(this,getContentResolver());
+        mPresenter = new MapPresenter(this, getContentResolver());
 
         setUpLocationCallback();
 
@@ -145,7 +147,7 @@ public class MapView extends AppCompatActivity implements
 
         //Used for Sign out.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
     }
@@ -173,7 +175,7 @@ public class MapView extends AppCompatActivity implements
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.list_view:
-                Intent intent = new Intent(this,ListView.class);
+                Intent intent = new Intent(this, ListView.class);
                 startActivity(intent);
                 return true;
             case R.id.sign_out:
@@ -194,8 +196,10 @@ public class MapView extends AppCompatActivity implements
                     }
                 });
         boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
-        if(loggedIn){LoginManager.getInstance().logOut();}
-        Intent i = new Intent(this,SignInView.class);
+        if (loggedIn) {
+            LoginManager.getInstance().logOut();
+        }
+        Intent i = new Intent(this, SignInView.class);
         startActivity(i);
         finish();
     }
@@ -256,17 +260,17 @@ public class MapView extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         //Later Store the markers in a list of Markers. Case we need it. its here.
-        Integer index = 0;
-        for (Message message : mPresenter.getData()) {
-            Marker marker = mMap.addMarker(new MarkerOptions()
-                    .position(message.getLatLng())
-                    .title(message.getTitle())
-                    .snippet(message.getMessage())
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.message)));
-            marker.setTag(index);
-            index++;
-
-        }
+//        Integer index = 0;
+//        for (Message message : mPresenter.getData()) {
+//            Marker marker = mMap.addMarker(new MarkerOptions()
+//                    .position(message.getPosition())
+//                    .title(message.getTitle())
+//                    .snippet(message.getMessage())
+//                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.message)));
+//            marker.setTag(index);
+//            index++;
+//
+//        }
         mMap.setOnInfoWindowClickListener(this);
         //Remove those Buttons
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -309,6 +313,8 @@ public class MapView extends AppCompatActivity implements
         //SetUp Location Updates
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
+
+        setUpClusterer();
 
     }
 
@@ -463,11 +469,36 @@ public class MapView extends AppCompatActivity implements
     }
 
 
+    private void setUpClusterer() {
+        // Position the map.
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(51.503186, -0.126446), 10));
+
+        // Initialize the manager with the context and the map.
+        // (Activity extends context, so we can pass 'this' in the constructor.)
+        mClusterManager = new ClusterManager<Message>(this, mMap);
+
+        // Point the map's listeners at the listeners implemented by the cluster
+        // manager.
+        mMap.setOnCameraIdleListener(mClusterManager);
+        mMap.setOnMarkerClickListener(mClusterManager);
+
+        // Add cluster items (markers) to the cluster manager.
+        addItems();
+    }
+
+    private void addItems() {
+
+        for (Message message : mPresenter.getData()) {
+            mClusterManager.addItem(message);
+        }
+    }
+
+
     @Override
     public void onInfoWindowClick(Marker marker) {
         Intent intent = new Intent(this, ReadMessageView.class);
         Integer index = (Integer) marker.getTag();
-        intent.putExtra(ReadMessageView.POSITION_EXTRA,index);
+        intent.putExtra(ReadMessageView.POSITION_EXTRA, index);
         startActivity(intent);
     }
 

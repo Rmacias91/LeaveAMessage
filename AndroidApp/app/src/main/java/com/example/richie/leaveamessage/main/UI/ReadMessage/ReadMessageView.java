@@ -34,7 +34,7 @@ public class ReadMessageView extends FragmentActivity implements
         setContentView(R.layout.read_activity_layout);
         Intent intent = getIntent();
         int start_position = intent.getIntExtra(POSITION_EXTRA,0);
-        mPresenter = new ReadMessagePresenter(this);
+        mPresenter = new ReadMessagePresenter(this,getContentResolver());
         mPager = findViewById(R.id.pager);
         mPageAdapter = new ScreenSlidePageAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPageAdapter);

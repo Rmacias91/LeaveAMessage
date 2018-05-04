@@ -58,7 +58,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_view_layout);
         mMessages = new ArrayList<>();
-        mPresneter = new ListViewPresenter(this);
+        mPresneter = new ListViewPresenter(this,getContentResolver());
 
         mRecyclerView = findViewById(R.id.recycle_list);
         mRecyclerView.setHasFixedSize(true);
@@ -72,7 +72,7 @@ public class ListView extends AppCompatActivity implements ListViewContract.View
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
         mGoogleSignInClient = GoogleSignIn.getClient(this,gso);
 
-       // messageAPI = new MessageAPI();
+        //messageAPI = new MessageAPI();
         //messageAPI.getMessages();
         //Message testMessage = new Message("title","Im at Capitial One Cafe Tuesdays","41.9456354","-87.6679754");
         //testMessage.setMessage("3 Hours later still here!");

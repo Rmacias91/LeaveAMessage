@@ -1,8 +1,12 @@
 package com.example.richie.leaveamessage.main.UI.ReadMessage;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
+
+import com.example.richie.leaveamessage.main.Util.MessageUtil;
+import com.example.richie.leaveamessage.main.data.MessageContract;
 import com.example.richie.leaveamessage.main.models.Message;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,32 +15,29 @@ import java.util.List;
 
 public class ReadMessagePresenter implements ReadMessageContract.ReadMessagePresenter {
     private final ReadMessageContract.ReadMessageView mView;
-    private List<Message> mTestMessages;
+    private List<Message> mMessages;
+    private ContentResolver mContentResolver;
 
-    public ReadMessagePresenter(ReadMessageContract.ReadMessageView view){
+    public ReadMessagePresenter(ReadMessageContract.ReadMessageView view, ContentResolver contentResolver){
         mView = view;
-
-        //Need 7 decimals
-        //TODO fixOverLAy of messages https://developers.google.com/maps/documentation/android-api/utility/marker-clustering
-        mTestMessages = new ArrayList<Message>() {{
-            add(new Message("Look here", "Made ya Look", "41.9456354", "-87.6679754"));
-            add(new Message("Eyyyyy", "You made it to the coolest block in the city!", "42.9525643", "-87.6542044"));
-            add(new Message("Free Dominos", "Yum pizza", "41.9525644", "-87.6542000"));
-            add(new Message("I grew up here", "Hope you guys enjoy house! Great Memories", "41.9456359", "-87.6679759"));
-        }};
+        mContentResolver = contentResolver;
+        Cursor cursor = mContentResolver.query(MessageContract.MessageEntry.CONTENT_URI,
+                null,
+                null,
+                new String[]{},
+                null);
+        mMessages = MessageUtil.cursorToList(cursor);
 
     }
 
-
-
     @Override
     public List<Message> getData() {
-        return mTestMessages;
+        return mMessages;
     }
 
     @Override
     public Message getOneMessage(int position) {
-        return mTestMessages.get(position);
+        return mMessages.get(position);
     }
 
 
