@@ -15,6 +15,7 @@ public class MessageResponse {
     private Boolean success;
     private List<Message> messages;
     private String message;
+    private int insertId;
 
 
     public String getMessage() {
@@ -25,6 +26,9 @@ public class MessageResponse {
         return success;
     }
 
+    public int getInsertId(){
+        return insertId;
+    }
     public List<Message> getMessages() {
         return messages;
     }

@@ -15,7 +15,7 @@ import com.example.richie.leaveamessage.R;
  * Created by Richie on 4/8/2018.
  */
 
-public class WriteMessageView extends AppCompatActivity {
+public class WriteMessageView extends AppCompatActivity implements WriteMessageContract.view {
     private Button mLeaveMessageBut;
     private EditText mMessageEdit;
 
@@ -24,6 +24,7 @@ public class WriteMessageView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.write_activity_layout);
+        WriteMessagePresenter presenter = new WriteMessagePresenter(this,getContentResolver());
 
         mLeaveMessageBut = findViewById(R.id.write_message_but);
         mMessageEdit = findViewById(R.id.write_edit);
@@ -31,12 +32,17 @@ public class WriteMessageView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!TextUtils.isEmpty(mMessageEdit.getText())) {
-                    Toast.makeText(WriteMessageView.this, "Message Saved!", Toast.LENGTH_SHORT).show();
+
                     finish();
                 }
             }
         });
 
 
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(WriteMessageView.this, message, Toast.LENGTH_SHORT).show();
     }
 }

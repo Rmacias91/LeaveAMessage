@@ -101,7 +101,8 @@ public class MessageAPI {
         call.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                if (response.code() == 200) {
+                if (response.code() == 200 && response.body().getSuccess()) {
+                    mListener.onSuccess(response.body().getInsertId());
                     Log.d(TAG, "SUCCESS!" + response.body().getMessage());
                 }
             }
@@ -109,6 +110,7 @@ public class MessageAPI {
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Log.d(TAG, t.getMessage());
+                mListener.onFailure();
             }
         });
     }
