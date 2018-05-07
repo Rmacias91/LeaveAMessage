@@ -1,6 +1,7 @@
 package com.example.richie.leaveamessage.main.UI.WriteMessage;
 
 import android.content.ContentResolver;
+import android.net.Uri;
 
 import com.example.richie.leaveamessage.main.Network.MessageAPI;
 import com.example.richie.leaveamessage.main.Util.MessageUtil;
@@ -44,8 +45,8 @@ public class WriteMessagePresenter implements WriteMessageContract.presenter, Me
         mSavedMessage.setId(id);
         List<Message> messages = new ArrayList<>();
         messages.add(mSavedMessage);
-        mContentResolver.insert(MessageContract.MessageEntry.CONTENT_URI,
-                MessageUtil.messagesToContentVals(messages)[0]);
+        Uri uri = MessageContract.MessageEntry.CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
+        mContentResolver.insert(uri, MessageUtil.messagesToContentVals(messages)[0]);
     }
 
     @Override
