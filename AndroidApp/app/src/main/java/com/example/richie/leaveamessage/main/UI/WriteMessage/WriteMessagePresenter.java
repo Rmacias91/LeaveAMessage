@@ -47,6 +47,7 @@ public class WriteMessagePresenter implements WriteMessageContract.presenter, Me
         messages.add(mSavedMessage);
         Uri uri = MessageContract.MessageEntry.CONTENT_URI.buildUpon().appendPath(Integer.toString(id)).build();
         mContentResolver.insert(uri, MessageUtil.messagesToContentVals(messages)[0]);
+        mView.activityFinish();
     }
 
     @Override

@@ -71,6 +71,7 @@ public class MapView extends AppCompatActivity implements
     private static final String TAG = MapView.class.getSimpleName();
     public static final String LAST_KNOWN_LAT = "lastLat";
     public static final String LAST_KNOWN_LON = "lastLon";
+    private static final int RESULT_CODE = 24;
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
     private FloatingActionButton mLeaveMessageBut;
@@ -129,7 +130,7 @@ public class MapView extends AppCompatActivity implements
                 double lon = mLastKnownLocation.getLongitude();
                 intent.putExtra(LAST_KNOWN_LAT,lat);
                 intent.putExtra(LAST_KNOWN_LON,lon);
-                startActivity(intent);
+                startActivityForResult(intent,RESULT_CODE);
             }
         });
 
@@ -213,6 +214,10 @@ public class MapView extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        if(mMap!=null){
+            mMap.clear();
+            addItems();
+        }
         if (!mRequestingLocationUpdates) {
             startLocationUpdates();
         }
@@ -481,7 +486,7 @@ public class MapView extends AppCompatActivity implements
 
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        mClusterManager = new ClusterManager<Message>(this, mMap);
+        mClusterManager = new ClusterManager<>(this, mMap);
 
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
@@ -493,10 +498,11 @@ public class MapView extends AppCompatActivity implements
     }
 
     private void addItems() {
-
+        mClusterManager.clearItems();
         for (Message message : mPresenter.getData()) {
             mClusterManager.addItem(message);
         }
+        mClusterManager.cluster();
     }
 
 
@@ -508,6 +514,13 @@ public class MapView extends AppCompatActivity implements
         startActivity(intent);
     }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RESULT_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                addItems();
+            }
+        }
+    }
 }
-

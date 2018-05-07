@@ -14,6 +14,8 @@ public interface WriteMessageContract {
 
     public interface view{
         void showMessage(String message);
+
+        void activityFinish();
     }
 
 }

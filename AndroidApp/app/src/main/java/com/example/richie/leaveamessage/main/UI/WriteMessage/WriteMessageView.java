@@ -44,12 +44,17 @@ public class WriteMessageView extends AppCompatActivity implements WriteMessageC
                     presenter.saveMessage(mMessageEdit.getText().toString(),
                             mLat,
                             mLon);
-                    finish();
                 }
             }
         });
 
+    }
 
+    @Override
+    public void activityFinish() {
+        Intent data = new Intent();
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     @Override
