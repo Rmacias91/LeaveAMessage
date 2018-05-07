@@ -69,6 +69,8 @@ public class MapView extends AppCompatActivity implements
         MapContract.ViewMap {
     //TODO Any Logic with Data Lets Refactor to MVP
     private static final String TAG = MapView.class.getSimpleName();
+    public static final String LAST_KNOWN_LAT = "lastLat";
+    public static final String LAST_KNOWN_LON = "lastLon";
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
     private FloatingActionButton mLeaveMessageBut;
@@ -123,6 +125,10 @@ public class MapView extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapView.this, WriteMessageView.class);
+                double lat = mLastKnownLocation.getLatitude();
+                double lon = mLastKnownLocation.getLongitude();
+                intent.putExtra(LAST_KNOWN_LAT,lat);
+                intent.putExtra(LAST_KNOWN_LON,lon);
                 startActivity(intent);
             }
         });

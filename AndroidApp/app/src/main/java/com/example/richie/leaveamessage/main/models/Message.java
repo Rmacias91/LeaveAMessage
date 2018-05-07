@@ -81,4 +81,8 @@ public class Message implements ClusterItem {
     }
 
     public void setMessage(String message){this.Message = message;}
+
+    public void setId(int id){
+        this.id=id;
+    }
 }

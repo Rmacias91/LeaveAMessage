@@ -9,7 +9,7 @@ import com.example.richie.leaveamessage.main.models.Message;
 public interface WriteMessageContract {
 
     public interface presenter{
-        void saveMessage(Message message);
+        void saveMessage(String message,double lat, double lon);
     }
 
     public interface view{
