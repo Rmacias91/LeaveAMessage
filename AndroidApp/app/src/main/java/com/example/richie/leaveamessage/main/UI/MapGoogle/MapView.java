@@ -65,8 +65,9 @@ import com.google.maps.android.clustering.ClusterManager;
 
 public class MapView extends AppCompatActivity implements
         OnMapReadyCallback,
-        GoogleMap.OnInfoWindowClickListener,
-        MapContract.ViewMap {
+        //GoogleMap.OnInfoWindowClickListener,
+        MapContract.ViewMap,
+        ClusterManager.OnClusterItemInfoWindowClickListener<Message>{
     //TODO Any Logic with Data Lets Refactor to MVP
     private static final String TAG = MapView.class.getSimpleName();
     public static final String LAST_KNOWN_LAT = "lastLat";
@@ -103,6 +104,7 @@ public class MapView extends AppCompatActivity implements
     private MapContract.PresenterMap mPresenter;
 
     private GoogleSignInClient mGoogleSignInClient;
+    private Message clickedClusterItem;
 
 
     @SuppressLint("RestrictedApi")
@@ -125,12 +127,14 @@ public class MapView extends AppCompatActivity implements
         mLeaveMessageBut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MapView.this, WriteMessageView.class);
-                double lat = mLastKnownLocation.getLatitude();
-                double lon = mLastKnownLocation.getLongitude();
-                intent.putExtra(LAST_KNOWN_LAT,lat);
-                intent.putExtra(LAST_KNOWN_LON,lon);
-                startActivityForResult(intent,RESULT_CODE);
+                if(mLastKnownLocation!=null){
+                    Intent intent = new Intent(MapView.this, WriteMessageView.class);
+                    double lat = mLastKnownLocation.getLatitude();
+                    double lon = mLastKnownLocation.getLongitude();
+                    intent.putExtra(LAST_KNOWN_LAT,lat);
+                    intent.putExtra(LAST_KNOWN_LON,lon);
+                    startActivityForResult(intent,RESULT_CODE);
+                }
             }
         });
 
@@ -282,36 +286,36 @@ public class MapView extends AppCompatActivity implements
 //            index++;
 //
 //        }
-        mMap.setOnInfoWindowClickListener(this);
+        //mMap.setOnInfoWindowClickListener(this);
         //Remove those Buttons
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
 
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) findViewById(R.id.map), false);
-
-                TextView title = (infoWindow.findViewById(R.id.title));
-                title.setText(marker.getTitle());
-
-                TextView snippet = (infoWindow.findViewById(R.id.snippet));
-                snippet.setText(marker.getSnippet());
-
-                return infoWindow;
-            }
-        });
+//        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+//
+//            @Override
+//            // Return null here, so that getInfoContents() is called next.
+//            public View getInfoWindow(Marker arg0) {
+//                return null;
+//            }
+//
+//            @Override
+//            public View getInfoContents(Marker marker) {
+//                // Inflate the layouts for the info window, title and snippet.
+//                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+//                        (FrameLayout) findViewById(R.id.map), false);
+//
+//                TextView title = (infoWindow.findViewById(R.id.title));
+//                title.setText(marker.getTitle());
+//
+//                TextView snippet = (infoWindow.findViewById(R.id.snippet));
+//                snippet.setText(marker.getSnippet());
+//
+//                return infoWindow;
+//            }
+//        });
 
         getLocationPermission();
 
@@ -332,8 +336,8 @@ public class MapView extends AppCompatActivity implements
 
     private void changeLocationSettings() {
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(100000);
+        mLocationRequest.setInterval(5000);
+        mLocationRequest.setFastestInterval(50000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -391,14 +395,14 @@ public class MapView extends AppCompatActivity implements
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+//                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+//                                    new LatLng(mLastKnownLocation.getLatitude(),
+//                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
                             Log.e(TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+//                            mMap.moveCamera(CameraUpdateFactory
+//                                    .newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                             mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
@@ -492,35 +496,85 @@ public class MapView extends AppCompatActivity implements
         // manager.
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
+        mMap.setOnInfoWindowClickListener(mClusterManager);
+        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        mClusterManager
+                .setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<Message>() {
+                    @Override
+                    public boolean onClusterItemClick(Message message) {
+                        clickedClusterItem = message;
+                        return false;
+                    }
+                });
 
         // Add cluster items (markers) to the cluster manager.
         addItems();
+        mClusterManager.getMarkerCollection().setOnInfoWindowAdapter(
+                new MyCustomAdapterForItems());
     }
 
     private void addItems() {
         mClusterManager.clearItems();
-        for (Message message : mPresenter.getData()) {
-            mClusterManager.addItem(message);
-        }
+        mClusterManager.addItems(mPresenter.getData());
         mClusterManager.cluster();
     }
 
 
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        Intent intent = new Intent(this, ReadMessageView.class);
-        Integer index = (Integer) marker.getTag();
-        intent.putExtra(ReadMessageView.POSITION_EXTRA, index);
-        startActivity(intent);
-    }
+//    @Override
+//    public void onInfoWindowClick(Marker marker) {
+//        Intent intent = new Intent(this, ReadMessageView.class);
+//        Integer index = (Integer) marker.getTag();
+//        intent.putExtra(ReadMessageView.POSITION_EXTRA, index);
+//        startActivity(intent);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                addItems();
+                setUpClusterer();
             }
         }
     }
+
+    @Override
+    public void onClusterItemInfoWindowClick(Message message) {
+        //Cluster item InfoWindow clicked, set title as action
+        Intent intent = new Intent(this, ReadMessageView.class);
+        Integer index = (Integer) message.getId();
+        //TODO fix ReadView for an ID instead of tag maybe
+        intent.putExtra(ReadMessageView.POSITION_EXTRA, index);
+        startActivity(intent);
+
+    }
+
+    public class MyCustomAdapterForItems implements GoogleMap.InfoWindowAdapter {
+
+        private final View myContentsView;
+
+        MyCustomAdapterForItems() {
+            myContentsView = getLayoutInflater().inflate(
+                    R.layout.custom_info_contents, null);
+        }
+        @Override
+        public View getInfoWindow(Marker marker) {
+
+            TextView tvTitle = myContentsView.findViewById(R.id.title);
+            TextView tvSnippet = myContentsView.findViewById(R.id.snippet);
+
+            tvTitle.setText(clickedClusterItem.getTitle());
+            tvSnippet.setText(clickedClusterItem.getSnippet());
+
+            return myContentsView;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            return null;
+        }
+    }
+
+
+
 }

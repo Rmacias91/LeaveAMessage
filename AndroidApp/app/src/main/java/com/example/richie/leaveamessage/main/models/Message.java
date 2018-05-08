@@ -85,4 +85,12 @@ public class Message implements ClusterItem {
     public void setId(int id){
         this.id=id;
     }
+
+    public void setLat(String lat) {
+        Lat = lat;
+    }
+
+    public void setLon(String lon) {
+        Lon = lon;
+    }
 }
