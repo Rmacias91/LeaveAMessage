@@ -15,6 +15,7 @@ public interface MapContract {
 
     interface PresenterMap{
         List<Message> getData();
+        int getPosition(Message message);
     }
 
     interface ModelMap{

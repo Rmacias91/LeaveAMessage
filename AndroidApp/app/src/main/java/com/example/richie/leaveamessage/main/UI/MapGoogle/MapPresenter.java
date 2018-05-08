@@ -23,6 +23,7 @@ public class MapPresenter implements MapContract.PresenterMap {
     public static final String TAG = MapPresenter.class.getSimpleName();
     private MapContract.ViewMap view;
     private ContentResolver mContentResolver;
+    private List<Message> mMessages;
 
 
     MapPresenter(MapContract.ViewMap view, ContentResolver contentResolver) {
@@ -39,10 +40,15 @@ public class MapPresenter implements MapContract.PresenterMap {
                 new String[]{},
                 null);
 
-        List<Message> messages = MessageUtil.cursorToList(cursor);
+        mMessages = MessageUtil.cursorToList(cursor);
 
-        return offsetMarkers(messages);
+        return offsetMarkers(mMessages);
         //TODO fixOverLAy of messages https://developers.google.com/maps/documentation/android-api/utility/marker-clustering
+    }
+
+    @Override
+    public int getPosition(Message message) {
+        return mMessages.indexOf(message);
     }
 
     //TODO Refactor this nested loop or make a listView for clustered items

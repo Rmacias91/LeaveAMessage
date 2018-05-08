@@ -542,11 +542,9 @@ public class MapView extends AppCompatActivity implements
     public void onClusterItemInfoWindowClick(Message message) {
         //Cluster item InfoWindow clicked, set title as action
         Intent intent = new Intent(this, ReadMessageView.class);
-        Integer index = (Integer) message.getId();
-        //TODO fix ReadView for an ID instead of tag maybe
-        intent.putExtra(ReadMessageView.POSITION_EXTRA, index);
+        int position = mPresenter.getPosition(message);
+        intent.putExtra(ReadMessageView.POSITION_EXTRA, position);
         startActivity(intent);
-
     }
 
     public class MyCustomAdapterForItems implements GoogleMap.InfoWindowAdapter {
