@@ -16,6 +16,8 @@ public interface ReadMessageContract {
 
         public void finishRead();
 
+        public int getCurrentMessagePos();
+
     }
 
     public interface ReadMessagePresenter {

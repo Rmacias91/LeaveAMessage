@@ -19,7 +19,7 @@
 
     <!--Content Provider -->
     <string name="content_authority">com.example.richie.leaveamessage</string>
-    <string name="delete">delete</string>
+    <string name="delete">Delete Message</string>
 
 
 </resources>

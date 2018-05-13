@@ -140,13 +140,14 @@ public class MessageAPI {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 if (response.code() == 200) {
-
+                    mListener.onSuccess(response);
                     Log.d(TAG, "Success!" + response.body().getMessage());
                 }
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
+                mListener.onFailure();
                 Log.d(TAG, t.getMessage());
             }
         });

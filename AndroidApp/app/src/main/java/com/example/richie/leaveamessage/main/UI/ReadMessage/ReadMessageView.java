@@ -9,25 +9,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
-import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
 import com.example.richie.leaveamessage.main.models.Message;
 
 /**
  * Created by Richie on 4/3/2018.
  */
 
-public class ReadMessageView extends FragmentActivity implements
+public class ReadMessageView extends AppCompatActivity implements
         ReadMessageContract.ReadMessageView{
 
     public static final String FRAGMENT_TITLE_KEY = "title";
     public static final String FRAGMENT_MESSAGE_KEY = "message";
     public static final String POSITION_EXTRA= "position_extra";
+    private static final String TAG = ReadMessageView.class.getSimpleName();
 
 
     private ViewPager mPager;
@@ -44,13 +46,16 @@ public class ReadMessageView extends FragmentActivity implements
         mPageAdapter = new ScreenSlidePageAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPageAdapter);
         mPager.setCurrentItem(start_position);
+    }
 
+    public int getCurrentMessagePos(){
+        return mPager.getCurrentItem();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_setting_read, menu);
+        inflater.inflate(R.menu.menu_setting_read,menu);
         return true;
     }
 

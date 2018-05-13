@@ -34,6 +34,7 @@ public class ReadMessagePresenter implements ReadMessageContract.ReadMessagePres
 
 
     private void refreshList() {
+
         Cursor cursor = mContentResolver.query(MessageContract.MessageEntry.CONTENT_URI,
                 null,
                 null,
@@ -50,12 +51,13 @@ public class ReadMessagePresenter implements ReadMessageContract.ReadMessagePres
     @Override
     public Message getOneMessage(int position) {
         Message message = mMessages.get(position);
-        mCurrentId = message.getId();
         return message;
     }
 
     @Override
     public void deleteMessage() {
+        int pos = mView.getCurrentMessagePos();
+        mCurrentId = mMessages.get(pos).getId();
         messageAPIService.deleteMessage(mCurrentId);
     }
 
@@ -65,6 +67,7 @@ public class ReadMessagePresenter implements ReadMessageContract.ReadMessagePres
         Uri uri = MessageContract.MessageEntry.CONTENT_URI.buildUpon().appendPath(String.valueOf(mCurrentId)).build();
         int rowsDeleted = mContentResolver.delete(uri, null, null);
         if (rowsDeleted == 1) {
+            mMessages.clear();
             refreshList();
             mView.showMessage("Deleted!");
             mView.finishRead();
