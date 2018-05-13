@@ -12,6 +12,10 @@ public interface ReadMessageContract {
 
     public interface ReadMessageView{
 
+        public void showMessage(String message);
+
+        public void finishRead();
+
     }
 
     public interface ReadMessagePresenter {
@@ -19,6 +23,8 @@ public interface ReadMessageContract {
         public List<Message> getData();
 
         public Message getOneMessage(int position);
+
+        public void deleteMessage();
 
     }
 

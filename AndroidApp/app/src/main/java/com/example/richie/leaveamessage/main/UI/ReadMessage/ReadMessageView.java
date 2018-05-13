@@ -9,8 +9,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.richie.leaveamessage.R;
+import com.example.richie.leaveamessage.main.UI.MessageList.ListView;
 import com.example.richie.leaveamessage.main.models.Message;
 
 /**
@@ -40,6 +45,34 @@ public class ReadMessageView extends FragmentActivity implements
         mPager.setAdapter(mPageAdapter);
         mPager.setCurrentItem(start_position);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_setting_read, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_delete:
+                mPresenter.deleteMessage();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void finishRead() {
+        finish();
     }
 
     private class ScreenSlidePageAdapter extends FragmentStatePagerAdapter{
