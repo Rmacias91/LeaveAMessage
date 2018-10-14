@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#d32f2f</color>
+    <color name="colorPrimaryDark">#9a0007</color>
+    <color name="colorAccent">#ff6659</color>
     <color name="lightGray">#f2f4f7</color>
     <color name="white">#ffffff</color>
-    <color name = "backgroundStart">#F4C006</color>
-    <color name = "backgroundCenter">#F7D764</color>
-    <color name = "backgroundEnd">#FBE493</color>
+    <color name = "background">#F0F0F0</color>
     <color name="black">#000000</color>
-    <color name="googleGreen">#87bb74</color>
-    <color name="facebookBlue">#8b9dc3</color>
 
 </resources>
