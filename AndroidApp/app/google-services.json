@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "931470245136",
+    "firebase_url": "https://leaveamessage-a954a.firebaseio.com",
+    "project_id": "leaveamessage-a954a",
+    "storage_bucket": "leaveamessage-a954a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931470245136:android:cd260d08d1729c7c",
+        "android_client_info": {
+          "package_name": "com.example.richie.leaveamessage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931470245136-fvkqa2fhunjjkges3rnlar2bmlp6466c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.richie.leaveamessage",
+            "certificate_hash": "6602e8dfabbcd8dd9b33b07679751a52442b4e8d"
+          }
+        },
+        {
+          "client_id": "931470245136-47noaj9121stp4pasvnboe7eftatnpi4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgv_wENrWoImoD3--s81SSd-ckXg16CrY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931470245136-47noaj9121stp4pasvnboe7eftatnpi4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

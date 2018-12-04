@@ -4,15 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 
 import com.example.richie.leaveamessage.main.UI.MapGoogle.MapView;
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
 import com.facebook.login.widget.LoginButton;
@@ -31,7 +27,6 @@ import java.util.Arrays;
  */
 
 public class SignInView extends AppCompatActivity implements View.OnClickListener, SignInContract.ViewSignIn{
-    private static final String TAG = SignInView.class.getSimpleName();
     private static final String EMAIL = "email";
     private GoogleSignInClient mGoogleSignInClient;
     private SignInPresenter signInPresenter;
